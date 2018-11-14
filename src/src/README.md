@@ -23,4 +23,4 @@ Program 3: Phase 1
 ## Model: JTriangleTexture
 The model is a combination of three points. It tracks its points and can redraw itself. It should default 
 - Contains a set texture function
-- It's points can be accessed. 
+- It's points can be accessed and updated.
