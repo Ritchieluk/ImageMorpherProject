@@ -7,16 +7,19 @@ public class GriddedImage extends JPanel {
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow, sCol, rDiff, cDiff;
     public TriangleGrid grid;
+    private JMorphListener runner;
 
 
-    public GriddedImage(BufferedImage pic1, String imgPath, MorphActionListener listener, TriangleGrid g){
-        GriddedImage(pic1, imgPath);
+    public GriddedImage(BufferedImage pic1, String imgPath, JMorphListener listener, TriangleGrid g){
+        new GriddedImage(pic1, imgPath, listener);
         grid = g;
     }
-    public GriddedImage(BufferedImage pic1, String imgPath){
+
+    public GriddedImage(BufferedImage pic1, String imgPath, JMorphListener listener){
         super();
         path = imgPath;
         img = pic1;
+        runner = listener;
 
         if(img.getWidth() == -1) {
             System.out.println("Unexpected image size, exiting...");
@@ -30,7 +33,8 @@ public class GriddedImage extends JPanel {
         }
         height = img.getHeight();
 
-        addMorphActionListener(this);
+        addMouseListener(runner);
+        addMouseMotionListener(runner);
 
     }
 }
