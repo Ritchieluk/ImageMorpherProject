@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class ImageGrid extends JPanel {
     int width, height;
@@ -13,5 +14,6 @@ public class ImageGrid extends JPanel {
                 points[i][j] = new GridPoint(i*20, j*20);
             }
         }
+        setPreferredSize(new Dimension(w*20+40, h*20+40));
     }
 }
