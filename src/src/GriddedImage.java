@@ -180,3 +180,42 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
 
 
 }
+
+/*
+private Polygon[][] animate() {
+        Polygon[] original = oldGrid.setupGrid();
+        Polygon[] target = newGrid.setupGrid();
+
+        Polygon[][] animatedGrid = new Polygon[frames][original.length];
+        for(int i = 0; i < frames; i++){
+            float alpha = frame * 1 / (float) (frames - 1);
+            Polygon[] intermediateGrids = intermediateGrid(original, target, alpha);
+            animatedGrid[i] = intermediateGrids;
+        }
+        return animatedGrid;
+    }
+
+    private static Polygon[] intermediateGrid(Polygon[] orig, Polygon[] targ, float a){
+        Polygon[] inter = new Polygon[orig.length];
+        for(int i = 0; i < orig.length; i++){
+            Polygon pOrig = orig[i];
+            Polygon pTarg = targ[i];
+
+            int[] xO = pOrig.xpoints;
+            int[] yO = pOrig.ypoints;
+            int[] xT = pTarg.xpoints;
+            int[] yT = pTarg.ypoints;
+
+            int[] xI = new int[3];
+            int[] yI = new int[3];
+            for(int j = 0; j < 3; j++){
+                xI[j] = (int) (a*xT[j] + (1-a) * xO[j]);
+                yI[j] = (int) (a*yT[j] + (1-a) * yO[j]);
+            }
+
+            Polygon interPoly = new Polygon(xI, yI, 3);
+            inter[i] = interPoly;
+        }
+        return inter;
+    }
+ */
