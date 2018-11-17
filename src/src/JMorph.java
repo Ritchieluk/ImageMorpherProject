@@ -171,15 +171,23 @@ public class JMorph extends JFrame {
         return newImage;
     }
 
-    Polygon[] original = oldGrid.setupGrid();
-    Polygon[] target = newGrid.setupGrid();
-    float alpha = frame*1/(float)(frames-1);
-    Polygon[] intermediateGrids = intermediateGrid(original, target, alpha);
 
+    private Polygon[][] animate() {
+        Polygon[] original = oldGrid.setupGrid();
+        Polygon[] target = newGrid.setupGrid();
 
-    private static Polygon[] intermediateGrid(Polygon[] orig, Polygon[] targ, float a){
+        Polygon[][] animatedGrid = new Polygon[frames][original.length];
+        for(int i = 0; i < frames; i++){
+            float alpha = frame * 1 / (float) (frames - 1);
+            Polygon[] intermediateGrids = intermediateGrid(original, target, alpha);
+            animatedGrid[i] = intermediateGrids;
+        }
+        return animatedGrid;
+    }
+
+    private static Polygon[] intermediateGrid(Polygon[]orig, Polygon[]targ,float a){
         Polygon[] inter = new Polygon[orig.length];
-        for(int i = 0; i < orig.length; i++){
+        for (int i = 0; i < orig.length; i++) {
             Polygon pOrig = orig[i];
             Polygon pTarg = targ[i];
 
@@ -190,9 +198,9 @@ public class JMorph extends JFrame {
 
             int[] xI = new int[3];
             int[] yI = new int[3];
-            for(int j = 0; j < 3; j++){
-                xI[j] = (int) (a*xT[j] + (1-a) * xO[j]);
-                yI[j] = (int) (a*yT[j] + (1-a) * yO[j]);
+            for (int j = 0; j < 3; j++) {
+                xI[j] = (int) (a * xT[j] + (1 - a) * xO[j]);
+                yI[j] = (int) (a * yT[j] + (1 - a) * yO[j]);
             }
 
             Polygon interPoly = new Polygon(xI, yI, 3);
