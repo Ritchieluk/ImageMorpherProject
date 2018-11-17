@@ -172,6 +172,7 @@ public class JMorph extends JFrame {
     }
 
 
+
     Polygon[] original = oldGrid.setupGrid();
     Polygon[] target = newGrid.setupGrid();
     float alpha = frame*1/(float)(frames-1);
