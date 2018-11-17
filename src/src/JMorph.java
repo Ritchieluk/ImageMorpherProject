@@ -15,7 +15,7 @@ public class JMorph extends JFrame {
     private GriddedImage leftGrid, rightGrid;
     private TriangleGrid oldGrid, newGrid;
     private JPanel panel, controls, images, leftPanel, rightPanel;
-    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight;
+    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate;
     private BufferedImage leftImage, rightImage;
     private JSlider timeSlider, frameSlider;
     private JLabel extra, timeLabel, frameLabel;
@@ -40,6 +40,7 @@ public class JMorph extends JFrame {
         quit = new JButton("Quit");
         resetLeft = new JButton("Reset Left Points");
         resetRight = new JButton("Reset Right Points");
+        animate = new JButton("Animate");
         timeSlider = new JSlider(1,5,3);
         frameSlider = new JSlider(0, 30, 30);
         extra = new JLabel("");
@@ -82,6 +83,10 @@ public class JMorph extends JFrame {
                     }
                 }
         );
+
+        animate.addActionListener(e -> {
+            timestart = true;
+        });
         uploadLeft.addActionListener(
                 new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
