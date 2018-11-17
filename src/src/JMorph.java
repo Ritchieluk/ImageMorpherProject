@@ -14,6 +14,7 @@ public class JMorph extends JFrame {
     private BufferedImage leftImage, rightImage;
     private JSlider speedSlider;
     private JLabel speedLabel;
+    static int rows = 11, cols = 11;
 
 
 

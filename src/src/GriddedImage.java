@@ -6,10 +6,10 @@ import java.awt.image.BufferedImage;
 
 public class GriddedImage extends JPanel {
     public BufferedImage img = null;
-    private int width, height, midpointWidth, midpointHeight, sRow, sCol, rDiff, cDiff, radius = 5;
+    private int width, height, midpointWidth, midpointHeight, sRow = -1, sCol = -1, rDiff, cDiff, radius = 5;
     private Color circleColor = Color.BLACK, lineColor = Color.WHITE;
     public TriangleGrid tGrid;
-    private JMorphListener runner;
+    private JMorphListener runner = new JMorphListener(this);
 
 
     public GriddedImage(BufferedImage pic1, JMorphListener listener, TriangleGrid g){
@@ -33,6 +33,11 @@ public class GriddedImage extends JPanel {
             System.exit(0);
         }
         height = img.getHeight();
+
+        midpointWidth = JMorph.rows;
+        midpointHeight = JMorph.cols;
+        tGrid = new TriangleGrid(midpointWidth, midpointHeight, width, height);
+
 
         addMouseListener(runner);
         addMouseMotionListener(runner);
@@ -73,14 +78,40 @@ public class GriddedImage extends JPanel {
         graphic.drawImage(img, rDiff, cDiff, this);
         createGrid(graphic, rDiff, cDiff);
     }
+
+    public int getRadius(){
+        return radius;
+    }
     public int getrDiff(){
         return rDiff;
     }
     public int getcDiff(){
         return cDiff;
     }
-
-
+    public int getMidpointWidth(){
+        return midpointWidth;
+    }
+    public int getMidpointHeight(){
+        return midpointHeight;
+    }
+    public TriangleGrid getTriangleGrid(){
+        return tGrid;
+    }
+    public Point getTriangleGridPoint(int x, int y){
+        return tGrid.points[x][y];
+    }
+    public int getsRow(){
+        return sRow;
+    }
+    public int getsCol(){
+        return sCol;
+    }
+    public void setsRow(int r){
+        sRow = r;
+    }
+    public void setsCol(int c){
+        sCol = c;
+    }
     public void setCircleColor(Color cColor) {
         circleColor = cColor;
         repaint();
