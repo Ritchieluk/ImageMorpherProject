@@ -53,11 +53,7 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
     public void createGrid(Graphics graphic, int xDiff, int yDiff){
         rDiff = xDiff;
         cDiff = yDiff;
-        /*Polygon[] polys = tGrid.setupGrid();
 
-        for(int i = 0; i < (midpointHeight-1) * (midpointWidth - 1) *2; i++){
-            graphic.drawpolys[i].
-        }*/
         for(int i = 0; i < midpointWidth; i++){
             for(int j = 0; j<midpointHeight; j++){
                 Point p = tGrid.points[i][j];
