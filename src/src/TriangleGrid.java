@@ -16,9 +16,7 @@ public class TriangleGrid implements Serializable {
             }
         }
     }
-        /*
-            I need to add in a section where lines are initialized.
-         */
+
     public Polygon[] setupGrid(){
         int triNum = (width-1) * (height - 1) *2;
         Polygon[] triangles = new Polygon[triNum];

@@ -44,6 +44,7 @@ public class GriddedImage extends JPanel {
         midpointWidth = JMorph.rows;
         midpointHeight = JMorph.cols;
         tGrid = new TriangleGrid(midpointWidth, midpointHeight, width, height);
+        tGrid.setupGrid();
 
 
 
