@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class GriddedImage extends JPanel {
-    public String path = null;
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow, sCol, rDiff, cDiff, radius = 5;
     private Color circleColor = Color.BLACK, lineColor = Color.WHITE;
@@ -11,14 +10,13 @@ public class GriddedImage extends JPanel {
     private JMorphListener runner;
 
 
-    public GriddedImage(BufferedImage pic1, String imgPath, JMorphListener listener, TriangleGrid g){
-        new GriddedImage(pic1, imgPath, listener);
+    public GriddedImage(BufferedImage pic1, JMorphListener listener, TriangleGrid g){
+        new GriddedImage(pic1, listener);
         tGrid = g;
     }
 
-    public GriddedImage(BufferedImage pic1, String imgPath, JMorphListener listener){
+    public GriddedImage(BufferedImage pic1, JMorphListener listener){
         super();
-        path = imgPath;
         img = pic1;
         runner = listener;
 

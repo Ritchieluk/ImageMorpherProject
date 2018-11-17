@@ -3,9 +3,12 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class JMorphListener implements MouseListener, MouseMotionListener {
+    private GriddedImage pic;
+    public JMorphListener(GriddedImage img){
+        pic = img;
+    }
     public void mousePressed(MouseEvent e){
-
-
+        int xPos = e.getX() -
     }
     public void mouseReleased(MouseEvent e){
 
