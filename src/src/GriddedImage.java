@@ -77,7 +77,7 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
                 }
 
                 graphic.setColor(circleColor);
-                graphic.fillOval(rDiff - radius + p.x, cDiff - radius + p.y, 2*radius, 2*radius);
+                graphic.fillOval(rDiff - radius + (int) p.getX(), cDiff - radius + (int) p.getY(), 2*radius, 2*radius);
 
             }
         }

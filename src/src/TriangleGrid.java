@@ -12,7 +12,7 @@ public class TriangleGrid implements Serializable {
         points = new Point[w][h];
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                points[i][j] = new Point(trueW * i / (width - 1), trueH * 20 / (height - 1));
+                points[i][j] = new Point(trueW * i / (width - 1), trueH * j / (height - 1));
             }
         }
     }
