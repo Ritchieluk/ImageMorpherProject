@@ -60,9 +60,12 @@ public class JMorph extends JFrame {
 
                             rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                             pls = new JLabel("", new ImageIcon(rightImage), JLabel.CENTER);
-                            rightPanel.add(pls, BorderLayout.CENTER);
+                            //rightPanel.add(pls, BorderLayout.CENTER);
+                            rightGrid = new GriddedImage(rightImage, new JMorphListener(rightGrid));
+                            rightPanel.add(rightGrid);
                             rightPanel.revalidate();
                             rightPanel.repaint();
+
                         }
                     }
                 }
@@ -80,11 +83,11 @@ public class JMorph extends JFrame {
                             } catch (IOException e1){};
 
                             leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                            pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
-                            leftPanel.add(pls, BorderLayout.CENTER);
-                            leftPanel.revalidate();
-                            leftPanel.repaint();
-
+                            //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
+                            leftGrid = new GriddedImage(leftImage, new JMorphListener(leftGrid));
+                            leftPanel.add(leftGrid);
+                            //leftPanel.revalidate();
+                            //leftPanel.repaint();
                         }
                     }
                 }
@@ -130,7 +133,6 @@ public class JMorph extends JFrame {
         float height, width, scale;
         height = image.getHeight();
         width = image.getWidth();
-        System.out.println(height +"    "+ width);
 
         if (height > width) {
             scale = newHeight / height;
@@ -142,8 +144,6 @@ public class JMorph extends JFrame {
             width = width * scale;
             height = height * scale;
         }
-
-        System.out.println(height +"    "+ width + "      " + scale);
 
         Image temp = image.getScaledInstance((int)width, (int)height, Image.SCALE_SMOOTH);
         BufferedImage newImage = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);

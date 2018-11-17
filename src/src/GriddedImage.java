@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class GriddedImage extends JPanel {
+
+    private JLabel pls;
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow = -1, sCol = -1, rDiff, cDiff, radius = 5;
     private Color circleColor = Color.BLACK, lineColor = Color.WHITE;
@@ -22,6 +24,11 @@ public class GriddedImage extends JPanel {
         img = pic1;
         runner = listener;
 
+        pls = new JLabel("", new ImageIcon(img), JLabel.CENTER);
+        add(pls, BorderLayout.CENTER);
+
+
+
         if(img.getWidth() == -1) {
             System.out.println("Unexpected image size, exiting...");
             System.exit(0);
@@ -37,6 +44,7 @@ public class GriddedImage extends JPanel {
         midpointWidth = JMorph.rows;
         midpointHeight = JMorph.cols;
         tGrid = new TriangleGrid(midpointWidth, midpointHeight, width, height);
+
 
 
         addMouseListener(runner);
