@@ -131,6 +131,7 @@ public class JMorph extends JFrame {
                     }
                 }
         );
+
         frameSlider.addChangeListener(
                 new ChangeListener()
                 {
