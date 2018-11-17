@@ -11,12 +11,13 @@ public class JMorph extends JFrame {
 
     private int MAX_IMAGE_SIZE = 400;
     private GriddedImage leftGrid, rightGrid;
+    private TriangleGrid oldGrid, newGrid;
     private JPanel panel, controls, images, leftPanel, rightPanel;
     private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight;
     private BufferedImage leftImage, rightImage;
     private JSlider speedSlider;
     private JLabel speedLabel;
-    static int rows = 11, cols = 11;
+    static int rows = 11, cols = 11, frame = 0, frames = 30;
 
 
 
@@ -61,7 +62,10 @@ public class JMorph extends JFrame {
                             } catch (IOException e1){};
 
                             rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+
+                            //rightPanel.add(pls, BorderLayout.CENTER);
                             rightGrid = new GriddedImage(rightImage);
+                            newGrid = rightGrid.getTriangleGrid();
                             rightPanel.add(rightGrid);
                             rightPanel.revalidate();
                             rightGrid.repaint();
@@ -84,7 +88,9 @@ public class JMorph extends JFrame {
                             } catch (IOException e1){};
 
                             leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+                            //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
                             leftGrid = new GriddedImage(leftImage);
+                            oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.add(leftGrid);
                             leftPanel.revalidate();
                             leftPanel.repaint();
@@ -113,6 +119,7 @@ public class JMorph extends JFrame {
         controls.add(resetLeft);
         controls.add(resetRight);
         controls.add(quit);
+        controls.add(speedLabel);
         controls.add(speedSlider);
         c.add(images, BorderLayout.NORTH);
         c.add(controls);
@@ -162,6 +169,36 @@ public class JMorph extends JFrame {
         g2d.dispose();
 
         return newImage;
+    }
+
+    Polygon[] original = oldGrid.setupGrid();
+    Polygon[] target = newGrid.setupGrid();
+    float alpha = frame*1/(float)(frames-1);
+    Polygon[] intermediateGrids = intermediateGrid(original, target, alpha);
+
+
+    private static Polygon[] intermediateGrid(Polygon[] orig, Polygon[] targ, float a){
+        Polygon[] inter = new Polygon[orig.length];
+        for(int i = 0; i < orig.length; i++){
+            Polygon pOrig = orig[i];
+            Polygon pTarg = targ[i];
+
+            int[] xO = pOrig.xpoints;
+            int[] yO = pOrig.ypoints;
+            int[] xT = pTarg.xpoints;
+            int[] yT = pTarg.ypoints;
+
+            int[] xI = new int[3];
+            int[] yI = new int[3];
+            for(int j = 0; j < 3; j++){
+                xI[j] = (int) (a*xT[j] + (1-a) * xO[j]);
+                yI[j] = (int) (a*yT[j] + (1-a) * yO[j]);
+            }
+
+            Polygon interPoly = new Polygon(xI, yI, 3);
+            inter[i] = interPoly;
+        }
+        return inter;
     }
 
 
