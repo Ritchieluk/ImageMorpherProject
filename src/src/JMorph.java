@@ -20,6 +20,8 @@ public class JMorph extends JFrame {
     private JSlider timeSlider, frameSlider;
     private JLabel extra, timeLabel, frameLabel;
     static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3;
+    private Timer frameCounter;
+    boolean timestart = false;
 
 
 
