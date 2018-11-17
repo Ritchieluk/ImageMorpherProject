@@ -25,7 +25,7 @@ public class GriddedImage extends JPanel {
         runner = listener;
 
         pls = new JLabel("", new ImageIcon(img), JLabel.CENTER);
-        add(pls, BorderLayout.CENTER);
+        add(pls);
 
 
 
@@ -83,7 +83,7 @@ public class GriddedImage extends JPanel {
     }
 
     public void paintComponent(Graphics graphic){
-        rDiff = 20; cDiff = 20;
+        //rDiff = 20; cDiff = 20;
         graphic.drawImage(img, rDiff, cDiff, this);
         createGrid(graphic, rDiff, cDiff);
     }

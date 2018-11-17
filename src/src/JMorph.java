@@ -64,7 +64,7 @@ public class JMorph extends JFrame {
                             rightGrid = new GriddedImage(rightImage, new JMorphListener(rightGrid));
                             rightPanel.add(rightGrid);
                             rightPanel.revalidate();
-                            rightPanel.repaint();
+                            rightGrid.repaint();
 
                         }
                     }
@@ -86,8 +86,8 @@ public class JMorph extends JFrame {
                             //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
                             leftGrid = new GriddedImage(leftImage, new JMorphListener(leftGrid));
                             leftPanel.add(leftGrid);
-                            //leftPanel.revalidate();
-                            //leftPanel.repaint();
+                            leftPanel.revalidate();
+                            leftPanel.repaint();
                         }
                     }
                 }
