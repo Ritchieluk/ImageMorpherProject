@@ -8,19 +8,21 @@ CS335, Dr. Seales
 
 Program 3: Phase 1
 
-## Controller: JMorph
+## Controller: JMorph + JMorphListener
+### JMorph
 - Contains a MouseActionListener that can move the points on each grid
 - Takes in both grids' matricies and creates a transformation between them
 - Has a button handler to upload images
-## View: JImageGrid
-- Takes an action listener so it can add it to the models
-- Contains an image.
-- Contains a matrix of all of its points.
-- When a dot is moved, the triangle should also move with it.
-- Transform(frames)
-- Made up of JTriangleTextures, has moveable dots that actively change the locations of the triangle textures.
-- sets the textures of its triangles given its image
-## Model: JTriangleTexture
-The model is a combination of three points. It tracks its points and can redraw itself. It should default 
-- Contains a set texture function
-- It's points can be accessed and updated.
+### JMorphListener
+- Handles all of the events for the grid; takes in a grid to know what to manipulate. 
+## View: GriddedImage
+- Takes an action listener so it can add it to itself
+- Takes in an image to determine where to place the grid
+- Contains a matrix of all of its points (TriangleGrid)
+- When a dot is moved, the JMorphListener handles reanimation
+- Build circles around each Point in the Triangle Grid
+- Allows 
+## Model: TriangleGrid
+The triangle grid is a grid of a given amount of x and y values over a given width and height.
+- For each x and y point combo it creates a Point
+- It then draws triangles (Polygons) in the upper right and bottom left of the grid between the points
