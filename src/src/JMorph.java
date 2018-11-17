@@ -9,11 +9,13 @@ import java.io.IOException;
 
 public class JMorph extends JFrame {
 
+    private int MAX_IMAGE_SIZE = 400;
+    private GriddedImage leftGrid, rightGrid;
     private JPanel panel, controls, images, leftPanel, rightPanel;
     private JButton uploadLeft, uploadRight, quit, reset;
     private BufferedImage leftImage, rightImage;
     private JSlider speedSlider;
-    private JLabel speedLabel;
+    private JLabel speedLabel, pls;
     static int rows = 11, cols = 11;
 
 
@@ -34,11 +36,9 @@ public class JMorph extends JFrame {
         reset = new JButton("Reset");
         speedSlider = new JSlider(0,10,5);
         speedLabel = new JLabel("Adjust the speed  of the animation.    --->");
-
-        leftPanel.setPreferredSize(new Dimension(200, 200));
-        rightPanel.setPreferredSize(new Dimension(200, 200));
-        images.add(leftPanel, BorderLayout.WEST);
-        images.add(rightPanel, BorderLayout.EAST);
+        images.setLayout(new GridLayout(1,2));
+        images.add(leftPanel);
+        images.add(rightPanel);
         panel.setLayout(new GridLayout(2,1,5,5));
         controls.setLayout(new GridLayout(3,2));
 
@@ -49,6 +49,7 @@ public class JMorph extends JFrame {
         uploadRight.addActionListener(
                 new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
+                        rightPanel.removeAll();
                         int returnVal = fc.showOpenDialog(null);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
@@ -57,7 +58,11 @@ public class JMorph extends JFrame {
                                 rightImage = ImageIO.read(new File(name));
                             } catch (IOException e1){};
 
-                            rightImage = resize(rightImage, 200, 200);
+                            rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+                            pls = new JLabel("", new ImageIcon(rightImage), JLabel.CENTER);
+                            rightPanel.add(pls, BorderLayout.CENTER);
+                            rightPanel.revalidate();
+                            rightPanel.repaint();
                         }
                     }
                 }
@@ -65,6 +70,7 @@ public class JMorph extends JFrame {
         uploadLeft.addActionListener(
                 new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
+                        leftPanel.removeAll();
                         int returnVal = fc.showOpenDialog(null);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
@@ -73,7 +79,12 @@ public class JMorph extends JFrame {
                                 leftImage = ImageIO.read(new File(name));
                             } catch (IOException e1){};
 
-                            leftImage = resize(leftImage, 200, 200);
+                            leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+                            pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
+                            leftPanel.add(pls, BorderLayout.CENTER);
+                            leftPanel.revalidate();
+                            leftPanel.repaint();
+
                         }
                     }
                 }
@@ -116,8 +127,26 @@ public class JMorph extends JFrame {
     }
 
     public BufferedImage resize(BufferedImage image, int newWidth, int newHeight) {
-        Image temp = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-        BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        float height, width, scale;
+        height = image.getHeight();
+        width = image.getWidth();
+        System.out.println(height +"    "+ width);
+
+        if (height > width) {
+            scale = newHeight / height;
+            height = height * scale;
+            width = width * scale;
+        }
+        else {
+            scale = newWidth / width;
+            width = width * scale;
+            height = height * scale;
+        }
+
+        System.out.println(height +"    "+ width + "      " + scale);
+
+        Image temp = image.getScaledInstance((int)width, (int)height, Image.SCALE_SMOOTH);
+        BufferedImage newImage = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = newImage.createGraphics();
         g2d.drawImage(temp, 0, 0, null);
