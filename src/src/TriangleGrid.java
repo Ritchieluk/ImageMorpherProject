@@ -58,4 +58,18 @@ public class TriangleGrid implements Serializable {
             }
         }
     }
+    public int getWidth(){
+        return width;
+
+    }
+    public int getHeight(){
+        return height;
+    }
+    public int getTrueWidth(){
+        return trueWidth;
+    }
+    public int getTrueHeight(){
+        return trueHeight;
+    }
+
 }

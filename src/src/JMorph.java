@@ -209,39 +209,25 @@ public class JMorph extends JFrame {
     }
 
 
-    private Polygon[][] animate() {
-        Polygon[] original = oldGrid.setupGrid();
-        Polygon[] target = newGrid.setupGrid();
+    private TriangleGrid[] animate() {
 
-        Polygon[][] animatedGrid = new Polygon[frames * seconds][original.length];
+        TriangleGrid[] animatedGrid = new TriangleGrid[frames*seconds];
         for(int i = 0; i < frames * seconds; i++){
             float alpha = frame * 1 / (float) (frames * seconds - 1);
-            Polygon[] intermediateGrids = intermediateGrid(original, target, alpha);
+            TriangleGrid intermediateGrids = intermediateGrid(oldGrid, newGrid, alpha);
             animatedGrid[i] = intermediateGrids;
         }
         return animatedGrid;
     }
 
-    private static Polygon[] intermediateGrid(Polygon[] orig, Polygon[] targ, float a){
-        Polygon[] inter = new Polygon[orig.length];
-        for(int i = 0; i < orig.length; i++){
-            Polygon pOrig = orig[i];
-            Polygon pTarg = targ[i];
-
-            int[] xO = pOrig.xpoints;
-            int[] yO = pOrig.ypoints;
-            int[] xT = pTarg.xpoints;
-            int[] yT = pTarg.ypoints;
-
-            int[] xI = new int[3];
-            int[] yI = new int[3];
-            for(int j = 0; j < 3; j++){
-                xI[j] = (int) (a*xT[j] + (1-a) * xO[j]);
-                yI[j] = (int) (a*yT[j] + (1-a) * yO[j]);
+    private static TriangleGrid intermediateGrid(TriangleGrid orig, TriangleGrid targ, float a){
+        TriangleGrid inter = new TriangleGrid(orig.getWidth(), orig.getHeight(), orig.getTrueWidth(), orig.getTrueWidth());
+        for(int i = 0; i < inter.getWidth(); i++){
+            for(int j = 0; j <inter.getHeight(); j++){
+                inter.points[i][j].x = (int) (a * orig.points[i][j].x + (1-a) * targ.points[i][j].x);
+                inter.points[j][j].y = (int) (a * orig.points[i][j].y + (1-a) * targ.points[i][j].y);
             }
 
-            Polygon interPoly = new Polygon(xI, yI, 3);
-            inter[i] = interPoly;
         }
         return inter;
     }
