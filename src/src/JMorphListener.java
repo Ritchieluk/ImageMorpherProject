@@ -8,7 +8,7 @@ public class JMorphListener implements MouseListener, MouseMotionListener {
         pic = img;
     }
     public void mousePressed(MouseEvent e){
-        int xPos = e.getX() -
+        int xPos = e.getX() - pic.getrDiff();
     }
     public void mouseReleased(MouseEvent e){
 

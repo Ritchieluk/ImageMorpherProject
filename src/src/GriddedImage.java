@@ -1,4 +1,4 @@
-/*
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -73,6 +73,12 @@ public class GriddedImage extends JPanel {
         graphic.drawImage(img, rDiff, cDiff, this);
         createGrid(graphic, rDiff, cDiff);
     }
+    public int getrDiff(){
+        return rDiff;
+    }
+    public int getcDiff(){
+        return cDiff;
+    }
 
 
     public void setCircleColor(Color cColor) {
@@ -89,4 +95,3 @@ public class GriddedImage extends JPanel {
         repaint();
     }
 }
-*/
