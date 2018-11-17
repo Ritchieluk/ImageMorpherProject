@@ -211,9 +211,9 @@ public class JMorph extends JFrame {
         Polygon[] original = oldGrid.setupGrid();
         Polygon[] target = newGrid.setupGrid();
 
-        Polygon[][] animatedGrid = new Polygon[frames][original.length];
-        for(int i = 0; i < frames; i++){
-            float alpha = frame * 1 / (float) (frames - 1);
+        Polygon[][] animatedGrid = new Polygon[frames * seconds][original.length];
+        for(int i = 0; i < frames * seconds; i++){
+            float alpha = frame * 1 / (float) (frames * seconds - 1);
             Polygon[] intermediateGrids = intermediateGrid(original, target, alpha);
             animatedGrid[i] = intermediateGrids;
         }
