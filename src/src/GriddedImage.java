@@ -71,16 +71,16 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
                     Point nextPoint = tGrid.points[i+1][j+1];
                     graphic.drawLine(p.x + rDiff, p.y + cDiff, nextPoint.x + rDiff, nextPoint.y + cDiff);
                 }
-
-                graphic.setColor(circleColor);
-                graphic.fillOval(rDiff - radius + (int) p.getX(), cDiff - radius + (int) p.getY(), 2*radius, 2*radius);
-
+                if(i > 0 && j > 0 && i < midpointWidth - 1 && j < midpointHeight - 1) {
+                    graphic.setColor(circleColor);
+                    graphic.fillOval(rDiff - radius + (int) p.getX(), cDiff - radius + (int) p.getY(), 2 * radius, 2 * radius);
+                }
             }
         }
     }
 
     public void paintComponent(Graphics graphic){
-        rDiff = 20; cDiff = 20;
+        rDiff = 0; cDiff = 0;
         graphic.drawImage(img, rDiff, cDiff, this);
         createGrid(graphic, rDiff, cDiff);
     }
@@ -158,7 +158,7 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
         int xPos = e.getX() - rDiff;
         int yPos = e.getY() - cDiff;
 
-        if(sRow!=-1 && sCol != -1){
+        if(sRow!=-1 && sCol != -1 && (xPos > 0 && yPos > 0 && xPos < img.getWidth() && yPos < img.getHeight())){
             tGrid.points[sRow][sCol].x = xPos;
             tGrid.points[sRow][sCol].y = yPos;
             repaint();
