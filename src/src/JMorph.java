@@ -1,6 +1,8 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -15,9 +17,9 @@ public class JMorph extends JFrame {
     private JPanel panel, controls, images, leftPanel, rightPanel;
     private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight;
     private BufferedImage leftImage, rightImage;
-    private JSlider speedSlider;
-    private JLabel speedLabel;
-    static int rows = 11, cols = 11, frame = 0, frames = 30;
+    private JSlider timeSlider, frameSlider;
+    private JLabel extra, timeLabel, frameLabel;
+    static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3;
 
 
 
@@ -36,13 +38,16 @@ public class JMorph extends JFrame {
         quit = new JButton("Quit");
         resetLeft = new JButton("Reset Left Points");
         resetRight = new JButton("Reset Right Points");
-        speedSlider = new JSlider(0,10,5);
-        speedLabel = new JLabel("Adjust the speed  of the animation.    --->");
+        timeSlider = new JSlider(1,5,3);
+        frameSlider = new JSlider(0, 30, 30);
+        extra = new JLabel("");
+        timeLabel = new JLabel("Adjust how many seconds the animation will run for.");
+        frameLabel = new JLabel("Adjust how many frames are shown per second during the animation.");
         images.setLayout(new GridLayout(1,2));
         images.add(leftPanel);
         images.add(rightPanel);
-        panel.setLayout(new GridLayout(2,1,5,5));
-        controls.setLayout(new GridLayout(3,2));
+        panel.setLayout(new GridLayout(2,1,5,20));
+        controls.setLayout(new GridLayout(5,2));
         resetRight.setEnabled(false);
         resetLeft.setEnabled(false);
 
@@ -108,10 +113,36 @@ public class JMorph extends JFrame {
             rightGrid.reset();
         });
 
-        speedSlider.setMinorTickSpacing(1);
-        speedSlider.setMajorTickSpacing(5);
-        speedSlider.setPaintTicks(true);
-        speedSlider.setPaintLabels(true);
+        timeSlider.setMajorTickSpacing(1);
+        timeSlider.setPaintTicks(true);
+        timeSlider.setPaintLabels(true);
+        frameSlider.setMinorTickSpacing(5);
+        frameSlider.setMajorTickSpacing(10);
+        frameSlider.setPaintTicks(true);
+        frameSlider.setPaintLabels(true);
+
+        timeSlider.addChangeListener(
+                new ChangeListener()
+                {
+                    public void stateChanged( ChangeEvent e )
+                    {
+                        seconds = timeSlider.getValue();
+                        System.out.println(seconds);
+                    }
+                }
+        );
+        frameSlider.addChangeListener(
+                new ChangeListener()
+                {
+                    public void stateChanged( ChangeEvent e )
+                    {
+                        if (frameSlider.getValue() == 0) {frames = 1;}
+                        else {frames = frameSlider.getValue();}
+                        System.out.println(frames);
+
+                    }
+                }
+        );
 
 
         controls.add(uploadLeft);
@@ -119,14 +150,17 @@ public class JMorph extends JFrame {
         controls.add(resetLeft);
         controls.add(resetRight);
         controls.add(quit);
-        controls.add(speedLabel);
-        controls.add(speedSlider);
+        controls.add(extra);
+        controls.add(frameLabel);
+        controls.add(timeLabel);
+        controls.add(frameSlider);
+        controls.add(timeSlider);
         c.add(images, BorderLayout.NORTH);
         c.add(controls);
         //add(c);
 
         images.setPreferredSize(new Dimension(1000, 500));
-        controls.setPreferredSize(new Dimension(100, 150));
+        controls.setPreferredSize(new Dimension(100, 250));
 
 
 
