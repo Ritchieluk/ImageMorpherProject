@@ -3,12 +3,14 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class TriangleGrid implements Serializable {
-    int width, height;
+    int width, height, trueWidth, trueHeight;
     Point[][] points;
 
     public TriangleGrid(int w, int h, int trueW, int trueH) {
         width = w;
         height = h;
+        trueHeight = trueH;
+        trueWidth = trueW;
         points = new Point[w][h];
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -48,5 +50,12 @@ public class TriangleGrid implements Serializable {
             }
         }
         return triangles;
+    }
+    public void reset(){
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                points[i][j] = new Point(trueWidth * i / (width - 1), trueHeight * j / (height - 1));
+            }
+        }
     }
 }

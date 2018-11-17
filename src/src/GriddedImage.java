@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 
 public class GriddedImage extends JPanel implements MouseMotionListener, MouseListener {
 
-    private JLabel pls;
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow = -1, sCol = -1, rDiff, cDiff, radius = 5;
     private Color circleColor = Color.BLACK, lineColor = Color.GREEN;
@@ -22,9 +21,6 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
     public GriddedImage(BufferedImage pic1){
         super();
         img = pic1;
-
-
-
 
 
         if(img.getWidth() == -1) {
@@ -83,6 +79,11 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
         rDiff = 0; cDiff = 0;
         graphic.drawImage(img, rDiff, cDiff, this);
         createGrid(graphic, rDiff, cDiff);
+    }
+
+    public void reset(){
+        tGrid.reset();
+        repaint();
     }
 
     public int getRadius(){

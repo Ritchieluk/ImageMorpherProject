@@ -12,10 +12,10 @@ public class JMorph extends JFrame {
     private int MAX_IMAGE_SIZE = 400;
     private GriddedImage leftGrid, rightGrid;
     private JPanel panel, controls, images, leftPanel, rightPanel;
-    private JButton uploadLeft, uploadRight, quit, reset;
+    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight;
     private BufferedImage leftImage, rightImage;
     private JSlider speedSlider;
-    private JLabel speedLabel, pls;
+    private JLabel speedLabel;
     static int rows = 11, cols = 11;
 
 
@@ -33,7 +33,8 @@ public class JMorph extends JFrame {
         uploadLeft = new JButton("Upload Left Image");
         uploadRight = new JButton("Upload Right Image");
         quit = new JButton("Quit");
-        reset = new JButton("Reset");
+        resetLeft = new JButton("Reset Left Points");
+        resetRight = new JButton("Reset Right Points");
         speedSlider = new JSlider(0,10,5);
         speedLabel = new JLabel("Adjust the speed  of the animation.    --->");
         images.setLayout(new GridLayout(1,2));
@@ -41,10 +42,11 @@ public class JMorph extends JFrame {
         images.add(rightPanel);
         panel.setLayout(new GridLayout(2,1,5,5));
         controls.setLayout(new GridLayout(3,2));
+        resetRight.setEnabled(false);
+        resetLeft.setEnabled(false);
 
         quit.addActionListener(e -> System.exit(0));
 
-        reset.addActionListener(e -> {});
 
         uploadRight.addActionListener(
                 new ActionListener() {
@@ -59,12 +61,11 @@ public class JMorph extends JFrame {
                             } catch (IOException e1){};
 
                             rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                            pls = new JLabel("", new ImageIcon(rightImage), JLabel.CENTER);
-                            //rightPanel.add(pls, BorderLayout.CENTER);
                             rightGrid = new GriddedImage(rightImage);
                             rightPanel.add(rightGrid);
                             rightPanel.revalidate();
                             rightGrid.repaint();
+                            resetRight.setEnabled(true);
 
                         }
                     }
@@ -83,15 +84,23 @@ public class JMorph extends JFrame {
                             } catch (IOException e1){};
 
                             leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                            //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
                             leftGrid = new GriddedImage(leftImage);
                             leftPanel.add(leftGrid);
                             leftPanel.revalidate();
                             leftPanel.repaint();
+                            resetLeft.setEnabled(true);
                         }
                     }
                 }
         );
+
+        resetLeft.addActionListener(e -> {
+            leftGrid.reset();
+        });
+
+        resetRight.addActionListener(e -> {
+            rightGrid.reset();
+        });
 
         speedSlider.setMinorTickSpacing(1);
         speedSlider.setMajorTickSpacing(5);
@@ -101,9 +110,9 @@ public class JMorph extends JFrame {
 
         controls.add(uploadLeft);
         controls.add(uploadRight);
-        controls.add(reset);
+        controls.add(resetLeft);
+        controls.add(resetRight);
         controls.add(quit);
-        controls.add(speedLabel);
         controls.add(speedSlider);
         c.add(images, BorderLayout.NORTH);
         c.add(controls);
