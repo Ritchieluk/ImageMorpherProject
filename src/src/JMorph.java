@@ -61,7 +61,7 @@ public class JMorph extends JFrame {
                             rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                             pls = new JLabel("", new ImageIcon(rightImage), JLabel.CENTER);
                             //rightPanel.add(pls, BorderLayout.CENTER);
-                            rightGrid = new GriddedImage(rightImage, new JMorphListener(rightGrid));
+                            rightGrid = new GriddedImage(rightImage);
                             rightPanel.add(rightGrid);
                             rightPanel.revalidate();
                             rightGrid.repaint();
@@ -84,7 +84,7 @@ public class JMorph extends JFrame {
 
                             leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                             //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
-                            leftGrid = new GriddedImage(leftImage, new JMorphListener(leftGrid));
+                            leftGrid = new GriddedImage(leftImage);
                             leftPanel.add(leftGrid);
                             leftPanel.revalidate();
                             leftPanel.repaint();

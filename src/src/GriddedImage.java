@@ -1,29 +1,29 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
-public class GriddedImage extends JPanel {
+public class GriddedImage extends JPanel implements MouseMotionListener, MouseListener {
 
     private JLabel pls;
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow = -1, sCol = -1, rDiff, cDiff, radius = 5;
-    private Color circleColor = Color.BLACK, lineColor = Color.WHITE;
+    private Color circleColor = Color.BLACK, lineColor = Color.GREEN;
     public TriangleGrid tGrid;
-    private JMorphListener runner = new JMorphListener(this);
 
 
-    public GriddedImage(BufferedImage pic1, JMorphListener listener, TriangleGrid g){
-        new GriddedImage(pic1, listener);
+    public GriddedImage(BufferedImage pic1, TriangleGrid g){
+        new GriddedImage(pic1);
         tGrid = g;
     }
 
-    public GriddedImage(BufferedImage pic1, JMorphListener listener){
+    public GriddedImage(BufferedImage pic1){
         super();
         img = pic1;
-        runner = listener;
 
-        //pls = new JLabel("", new ImageIcon(img), JLabel.CENTER);
-        //add(pls);
+
 
 
 
@@ -42,19 +42,22 @@ public class GriddedImage extends JPanel {
         midpointWidth = JMorph.rows;
         midpointHeight = JMorph.cols;
         tGrid = new TriangleGrid(midpointWidth, midpointHeight, width, height);
-        tGrid.setupGrid();
 
 
 
-        addMouseListener(runner);
-        addMouseMotionListener(runner);
+        addMouseListener(this);
+        addMouseMotionListener(this);
         setPreferredSize(new Dimension(width, height));
     }
 
     public void createGrid(Graphics graphic, int xDiff, int yDiff){
         rDiff = xDiff;
         cDiff = yDiff;
+        /*Polygon[] polys = tGrid.setupGrid();
 
+        for(int i = 0; i < (midpointHeight-1) * (midpointWidth - 1) *2; i++){
+            graphic.drawpolys[i].
+        }*/
         for(int i = 0; i < midpointWidth; i++){
             for(int j = 0; j<midpointHeight; j++){
                 Point p = tGrid.points[i][j];
@@ -64,11 +67,11 @@ public class GriddedImage extends JPanel {
                     Point nextPoint = tGrid.points[i][j+1];
                     graphic.drawLine(p.x + rDiff, p.y + cDiff, nextPoint.x + rDiff, nextPoint.y + cDiff);
                 }
-                else if(i != midpointWidth -1){
+                if(i != midpointWidth -1){
                     Point nextPoint = tGrid.points[i+1][j];
                     graphic.drawLine(p.x + rDiff, p.y + cDiff, nextPoint.x + rDiff, nextPoint.y + cDiff);
                 }
-                else if(i != midpointWidth -1 && j != midpointHeight - 1){
+                if(i != midpointWidth -1 && j != midpointHeight - 1){
                     Point nextPoint = tGrid.points[i+1][j+1];
                     graphic.drawLine(p.x + rDiff, p.y + cDiff, nextPoint.x + rDiff, nextPoint.y + cDiff);
                 }
@@ -132,4 +135,51 @@ public class GriddedImage extends JPanel {
         radius = r;
         repaint();
     }
+
+
+    public void mousePressed(MouseEvent e){
+        int xPos = e.getX() - rDiff;
+        int yPos = e.getY() - cDiff;
+
+        for(int i = 0; i < midpointWidth; i++){
+            for(int j = 0; j < midpointHeight; j++){
+                Point curPoint = tGrid.points[i][j];
+                if(curPoint.distance(xPos, yPos) <= radius){
+                    if(i != 0 && i!=midpointWidth -1 && j!=0 && j!= midpointHeight -1){
+                        sRow = i;
+                        sCol = j;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    public void mouseReleased(MouseEvent e){
+        sRow = -1;
+        sCol = -1;
+    }
+    public void mouseDragged(MouseEvent e){
+        int xPos = e.getX() - rDiff;
+        int yPos = e.getY() - cDiff;
+
+        if(sRow!=-1 && sCol != -1){
+            tGrid.points[sRow][sCol].x = xPos;
+            tGrid.points[sRow][sCol].y = yPos;
+            repaint();
+        }
+
+    }
+    public void mouseMoved(MouseEvent e) {
+    }
+
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+
 }
