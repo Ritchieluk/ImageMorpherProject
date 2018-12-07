@@ -6,6 +6,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 
@@ -15,8 +16,8 @@ public class JMorph extends JFrame {
     private GriddedImage leftGrid, rightGrid, previewGrid;
     private TriangleGrid oldGrid, newGrid, interGrid;
     private JPanel controls, images, leftPanel, rightPanel, leftImageOptions, rightImageOptions, gridOptions, gridText, frameOptions, frameText;
-    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph;
-    private BufferedImage leftImage, rightImage;
+    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph, leftBrighter, leftDarker;
+    private BufferedImage leftImage, rightImage, origLeft, origRight;
     private JSlider timeSlider, frameSlider, rowSlider, colSlider, rightBrightnessSlider, leftBrightnessSlider;
     private JLabel extra, timeLabel, frameLabel, leftBrightnessLabel, rightBrightnessLabel, rowLabel, colLabel;
     static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0;
@@ -70,8 +71,8 @@ public class JMorph extends JFrame {
         uploadMorph = new JButton("Upload Morph");
         timeSlider = new JSlider(1,5,3);
         frameSlider = new JSlider(0, 30, 30);
-        leftBrightnessSlider = new JSlider(1, 10, 5);
-        rightBrightnessSlider = new JSlider(1, 10, 5);
+        leftBrightnessSlider = new JSlider(1, 50, 25);
+        rightBrightnessSlider = new JSlider(1, 50, 25);
         rowSlider = new JSlider(0, 20, rows);
         colSlider = new JSlider(0, 20, cols);
         extra = new JLabel("");
@@ -123,9 +124,14 @@ public class JMorph extends JFrame {
         });
 
         uploadRight.addActionListener(manager);
+
         animate.addActionListener(manager);
+
+
         uploadLeft.addActionListener(manager);
+
         resetLeft.addActionListener(manager);
+
         resetRight.addActionListener(manager);
 
         timeSlider.setMajorTickSpacing(1);
@@ -152,9 +158,11 @@ public class JMorph extends JFrame {
 
 
         timeSlider.addChangeListener(manager);
+
         frameSlider.addChangeListener(manager);
         rowSlider.addChangeListener(manager);
         colSlider.addChangeListener(manager);
+
         leftBrightnessSlider.addChangeListener(manager);
 
         rightBrightnessSlider.addChangeListener(manager);
@@ -253,7 +261,7 @@ public class JMorph extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == animate) {
                 gridFrames = animate();
-                previewGrid = leftGrid;
+                previewGrid = new GriddedImage(leftImage, manager);
                 createPreview();
                 previewGrid.setGrid(gridFrames[0]);
                 frameCounter.start();
@@ -273,10 +281,12 @@ public class JMorph extends JFrame {
                     File file = fc.getSelectedFile();
                     String name = file.getAbsolutePath();
                     try {
-                        leftImage = ImageIO.read(new File(name));
+                        origLeft = ImageIO.read(new File(name));
                     } catch (IOException e1) {
                     }
                     ;
+                    leftImage = origLeft;
+                    origLeft = resize(origLeft, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
 
                     leftImageUploaded = true;
                     leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
@@ -299,11 +309,12 @@ public class JMorph extends JFrame {
                     File file = fc.getSelectedFile();
                     String name = file.getAbsolutePath();
                     try {
-                        rightImage = ImageIO.read(new File(name));
+                        origRight = ImageIO.read(new File(name));
                     } catch (IOException e1) {
                     }
                     ;
-
+                    rightImage = origRight;
+                    origRight = resize(origRight, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                     rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                     rightImageUploaded = true;
                     rightGrid = new GriddedImage(rightImage, manager);
@@ -334,23 +345,18 @@ public class JMorph extends JFrame {
                 }
             }
             else if(e.getSource() == leftBrightnessSlider){
-                float newBrightness;
-                int newRed, newBlue, newGreen;
-                for(int x = 0;x < leftImage.getWidth(); x++){
-                    for(int y = 0;y < leftImage.getHeight();y++){
-                        Color color = new Color(leftImage.getRGB(x, y));
-                        newBrightness = leftBrightnessSlider.getValue() / (float)10;
-                        newRed = (int)(color.getRed() + newBrightness) % 255;
-                        newBlue = (int)(color.getBlue() + newBrightness) % 255;
-                        newGreen = (int)(color.getGreen() + newBrightness) % 255;
-                        color = new Color(newRed, newBlue, newGreen);
-                        leftImage.setRGB(x, y, color.getRGB());
-                    }
-                }
+                float value = (float)leftBrightnessSlider.getValue();
+                float scalefactor = 2 * value / leftBrightnessSlider.getMaximum();
+                RescaleOp op = new RescaleOp(scalefactor, 0, null);
+                leftImage = op.filter(origLeft, leftImage);
                 repaint();
             }
             else if(e.getSource() == rightBrightnessSlider){
-
+                float value = (float)rightBrightnessSlider.getValue();
+                float scalefactor = 2 * value / rightBrightnessSlider.getMaximum();
+                RescaleOp op = new RescaleOp(scalefactor, 0, null);
+                rightImage = op.filter(origRight, rightImage);
+                repaint();
             }
             else if(e.getSource() == rowSlider){
                 if(!rowSlider.getValueIsAdjusting()){
