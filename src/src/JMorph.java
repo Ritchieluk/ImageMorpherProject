@@ -145,7 +145,6 @@ public class JMorph extends JFrame {
         resetRight.addActionListener(e -> {
             rightGrid.reset();
         });
-        //ii
 
         timeSlider.setMajorTickSpacing(1);
         timeSlider.setPaintTicks(true);
