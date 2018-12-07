@@ -32,7 +32,7 @@ public class JMorph extends JFrame {
         super("JMorph");
         Container c = this.getContentPane();
 
-        final JFileChooser fc = new JFileChooser(".");
+        final JFileChooser fc = new JFileChooser("./img");
         panel  = new JPanel();
         images = new JPanel();
         leftPanel = new JPanel();
