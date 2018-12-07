@@ -19,7 +19,7 @@ public class JMorph extends JFrame {
     private BufferedImage leftImage, rightImage;
     private JSlider timeSlider, frameSlider;
     private JLabel extra, timeLabel, frameLabel;
-    static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0, anirate = 0;
+    static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0, waitTime;
     private Timer frameCounter;
     boolean timestart = false;
     TriangleGrid[] gridFrames;
@@ -60,10 +60,10 @@ public class JMorph extends JFrame {
 
         quit.addActionListener(e -> System.exit(0));
 
-        frameCounter = new Timer((1000/frames), e -> {
+        frameCounter = new Timer((waitTime), e -> {
             if(frameCount<gridFrames.length) {
                 previewGrid.setGrid(gridFrames[frameCount]);
-                System.out.println(frameCount);
+                //System.out.println((1000/frames));
                 frameCount++;
             }
             else {
@@ -107,10 +107,6 @@ public class JMorph extends JFrame {
             previewGrid = leftGrid;
             createPreview();
             previewGrid.setGrid(gridFrames[0]);
-            System.out.println("Frames: " + frames);
-            System.out.println("Seconds: " + seconds);
-            anirate =  10000/frames;
-            System.out.println("Anirate: " + anirate);
             frameCounter.start();
         });
 
@@ -174,9 +170,7 @@ public class JMorph extends JFrame {
                     public void stateChanged( ChangeEvent e )
                     {
                         if (frameSlider.getValue() == 0) {frames = 1;}
-                        else {frames = frameSlider.getValue();
-                                frameCounter.setDelay(1000/frames);
-                        }
+                        else {frames = frameSlider.getValue();}
 
                     }
                 }
@@ -260,7 +254,6 @@ public class JMorph extends JFrame {
             float alpha = frame * 1 / (float) (frames * seconds - 1);
             TriangleGrid intermediateGrids = intermediateGrid(oldGrid, newGrid, alpha);
             animatedGrid[frame] = intermediateGrids;
-            System.out.println(frame);
         }
         frame = 0;
         return animatedGrid;
