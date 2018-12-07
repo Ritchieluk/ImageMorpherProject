@@ -23,6 +23,7 @@ public class JMorph extends JFrame {
     private Timer frameCounter;
     boolean timestart = false;
     TriangleGrid[] gridFrames;
+    final JFileChooser fc = new JFileChooser("./img");
 
 
 
@@ -30,9 +31,24 @@ public class JMorph extends JFrame {
 
     public JMorph(){
         super("JMorph");
+        setupGUI();
+        pack();
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                System.exit(0);
+            }
+        });
+        setResizable(false);
+        setVisible(true);
+
+
+    }
+
+    private void setupGUI(){
         Container c = this.getContentPane();
 
-        final JFileChooser fc = new JFileChooser("./img");
         panel  = new JPanel();
         images = new JPanel();
         leftPanel = new JPanel();
@@ -59,8 +75,9 @@ public class JMorph extends JFrame {
         resetRight.setEnabled(false);
         resetLeft.setEnabled(false);
         animate.setEnabled(false);
+        JMorphListener manager = new JMorphListener();
 
-        quit.addActionListener(e -> System.exit(0));
+        quit.addActionListener(manager);
 
         frameCounter = new Timer((1000/frames), e -> {
             if(frameCount<gridFrames.length) {
@@ -74,75 +91,16 @@ public class JMorph extends JFrame {
             }
         });
 
-        uploadRight.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed (ActionEvent e) {
-                        rightPanel.removeAll();
-                        int returnVal = fc.showOpenDialog(null);
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File file = fc.getSelectedFile();
-                            String name = file.getAbsolutePath();
-                            try {
-                                rightImage = ImageIO.read(new File(name));
-                            } catch (IOException e1){};
+        uploadRight.addActionListener(manager);
 
-                            rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                            rightGrid = new GriddedImage(rightImage);
-                            newGrid = rightGrid.getTriangleGrid();
-                            rightPanel.add(rightGrid);
-                            rightPanel.revalidate();
-                            rightGrid.repaint();
-                            resetRight.setEnabled(true);
-                            animateCounter++;
-                            if (animateCounter == 2){animate.setEnabled(true);}
-
-                        }
-                    }
-                }
-        );
-
-        animate.addActionListener(e -> {
-            gridFrames = animate();
-            previewGrid = new GriddedImage(leftImage);
-            createPreview();
-            previewGrid.setGrid(gridFrames[0]);
-            frameCounter.start();
-        });
+        animate.addActionListener(manager);
 
 
-        uploadLeft.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed (ActionEvent e) {
-                        leftPanel.removeAll();
-                        int returnVal = fc.showOpenDialog(null);
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File file = fc.getSelectedFile();
-                            String name = file.getAbsolutePath();
-                            try {
-                                leftImage = ImageIO.read(new File(name));
-                            } catch (IOException e1){};
+        uploadLeft.addActionListener(manager);
 
-                            leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                            leftGrid = new GriddedImage(leftImage);
-                            oldGrid = leftGrid.getTriangleGrid();
-                            leftPanel.add(leftGrid);
-                            leftPanel.revalidate();
-                            leftPanel.repaint();
-                            resetLeft.setEnabled(true);
-                            animateCounter++;
-                            if (animateCounter == 2){animate.setEnabled(true);}
-                        }
-                    }
-                }
-        );
+        resetLeft.addActionListener(manager);
 
-        resetLeft.addActionListener(e -> {
-            leftGrid.reset();
-        });
-
-        resetRight.addActionListener(e -> {
-            rightGrid.reset();
-        });
+        resetRight.addActionListener(manager);
 
         timeSlider.setMajorTickSpacing(1);
         timeSlider.setPaintTicks(true);
@@ -152,28 +110,9 @@ public class JMorph extends JFrame {
         frameSlider.setPaintTicks(true);
         frameSlider.setPaintLabels(true);
 
-        timeSlider.addChangeListener(
-                new ChangeListener()
-                {
-                    public void stateChanged( ChangeEvent e )
-                    {
-                        seconds = timeSlider.getValue();
-                    }
-                }
-        );
+        timeSlider.addChangeListener(manager);
 
-        frameSlider.addChangeListener(
-                new ChangeListener()
-                {
-                    public void stateChanged( ChangeEvent e )
-                    {
-                        if (frameSlider.getValue() == 0) {frames = 1;}
-                        else {frames = frameSlider.getValue();}
-                        frameCounter.setDelay(1000/frames);
-
-                    }
-                }
-        );
+        frameSlider.addChangeListener(manager);
 
 
         controls.add(uploadLeft);
@@ -191,21 +130,6 @@ public class JMorph extends JFrame {
 
         images.setPreferredSize(new Dimension(1000, 500));
         controls.setPreferredSize(new Dimension(100, 250));
-
-
-
-
-        pack();
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                System.exit(0);
-            }
-        });
-        setResizable(false);
-        setVisible(true);
-
 
     }
     private void createPreview(){
@@ -252,6 +176,7 @@ public class JMorph extends JFrame {
             float alpha = frame * 1 / (float) (frames * seconds - 1);
             TriangleGrid intermediateGrids = intermediateGrid(oldGrid, newGrid, alpha);
             animatedGrid[frame] = intermediateGrids;
+            System.out.println(frame);
         }
         frame = 0;
         return animatedGrid;
@@ -276,12 +201,87 @@ public class JMorph extends JFrame {
     }
 
     public class JMorphListener implements ActionListener, ChangeListener{
-        public void actionPerformed(ActionEvent e){
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == animate) {
+                gridFrames = animate();
+                previewGrid = leftGrid;
+                createPreview();
+                previewGrid.setGrid(gridFrames[0]);
+                frameCounter.start();
+            } else if (e.getSource() == quit) {
+                System.exit(0);
+            }
+            else if(e.getSource() == resetRight){
+                rightGrid.reset();
+            }
+            else if(e.getSource() == resetLeft){
+                leftGrid.reset();
+            }
+            else if(e.getSource() == uploadLeft) {
+                leftPanel.removeAll();
+                int returnVal = fc.showOpenDialog(null);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    String name = file.getAbsolutePath();
+                    try {
+                        leftImage = ImageIO.read(new File(name));
+                    } catch (IOException e1) {
+                    }
+                    ;
 
+                    leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+                    //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
+                    leftGrid = new GriddedImage(leftImage);
+                    oldGrid = leftGrid.getTriangleGrid();
+                    leftPanel.add(leftGrid);
+                    leftPanel.revalidate();
+                    leftPanel.repaint();
+                    resetLeft.setEnabled(true);
+                    animateCounter++;
+                    if (animateCounter == 2) {
+                        animate.setEnabled(true);
+                    }
+                }
+            }
+            else if(e.getSource() == uploadRight) {
+                rightPanel.removeAll();
+                int returnVal = fc.showOpenDialog(null);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    String name = file.getAbsolutePath();
+                    try {
+                        rightImage = ImageIO.read(new File(name));
+                    } catch (IOException e1) {
+                    }
+                    ;
 
+                    rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+
+                    //rightPanel.add(pls, BorderLayout.CENTER);
+                    rightGrid = new GriddedImage(rightImage);
+                    newGrid = rightGrid.getTriangleGrid();
+                    rightPanel.add(rightGrid);
+                    rightPanel.revalidate();
+                    rightGrid.repaint();
+                    resetRight.setEnabled(true);
+                    animateCounter++;
+                    if (animateCounter == 2) {
+                        animate.setEnabled(true);
+                    }
+                }
+            }
         }
         public void stateChanged(ChangeEvent e){
-
+            if(e.getSource() == timeSlider){
+                seconds = timeSlider.getValue();
+            }
+            else if(e.getSource() == frameSlider){
+                if (frameSlider.getValue() == 0) {frames = 1;}
+                else {
+                    frames = frameSlider.getValue();
+                    frameCounter.setDelay(1000/frames);
+                }
+            }
         }
 
     }
