@@ -205,11 +205,13 @@ public class JMorph extends JFrame {
         width = image.getWidth();
 
         if (height > width) {
+            width = height;
             scale = newHeight / height;
             height = height * scale;
             width = width * scale;
         }
         else {
+            height = width;
             scale = newWidth / width;
             width = width * scale;
             height = height * scale;
@@ -406,7 +408,7 @@ public class JMorph extends JFrame {
             else if(e.getSource() == colSlider){
                 if(!colSlider.getValueIsAdjusting()){
                     if(colSlider.getValue() == 0){
-                        cols = 1;
+                        cols = 2;
                         colSlider.setValue(cols);
                         cols = colSlider.getValue();
                         if(leftImageUploaded) {
