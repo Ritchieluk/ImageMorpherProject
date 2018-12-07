@@ -14,8 +14,8 @@ public class JMorph extends JFrame {
     private int MAX_IMAGE_SIZE = 400;
     private GriddedImage leftGrid, rightGrid, previewGrid;
     private TriangleGrid oldGrid, newGrid, interGrid;
-    private JPanel panel, controls, images, leftPanel, rightPanel;
-    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate;
+    private JPanel controls, images, leftPanel, rightPanel, leftImageOptions, rightImageOptions, centralOptions, gridOptions, frameOptions;
+    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph;
     private BufferedImage leftImage, rightImage;
     private JSlider timeSlider, frameSlider, rowSlider, colSlider;
     private JLabel extra, timeLabel, frameLabel;
@@ -49,8 +49,12 @@ public class JMorph extends JFrame {
     private void setupGUI(){
         Container c = this.getContentPane();
 
-        panel  = new JPanel();
         images = new JPanel();
+        leftImageOptions = new JPanel();
+        rightImageOptions = new JPanel();
+        gridOptions = new JPanel();
+        frameOptions = new JPanel();
+        centralOptions = new JPanel();
         leftPanel = new JPanel();
         rightPanel = new JPanel();
         controls = new JPanel();
@@ -60,6 +64,8 @@ public class JMorph extends JFrame {
         resetLeft = new JButton("Reset Left Points");
         resetRight = new JButton("Reset Right Points");
         animate = new JButton("Animate");
+        saveMorph = new JButton("Save Morph");
+        uploadMorph = new JButton("Upload Morph");
         timeSlider = new JSlider(1,5,3);
         frameSlider = new JSlider(0, 30, 30);
         rowSlider = new JSlider(1, 20, rows);
@@ -70,8 +76,22 @@ public class JMorph extends JFrame {
         images.setLayout(new GridLayout(1,2));
         images.add(leftPanel);
         images.add(rightPanel);
-        panel.setLayout(new GridLayout(2,1,5,20));
-        controls.setLayout(new GridLayout(5,2));
+        controls.setLayout(new GridLayout(5,3));
+        leftImageOptions.setLayout(new GridLayout(1,2));
+        leftImageOptions.add(uploadLeft);
+        leftImageOptions.add(resetLeft);
+        rightImageOptions.setLayout(new GridLayout(1,2));
+        rightImageOptions.add(uploadRight);
+        rightImageOptions.add(resetRight);
+        centralOptions.setLayout(new GridLayout(1,2));
+        centralOptions.add(saveMorph);
+        centralOptions.add(uploadMorph);
+        gridOptions.setLayout(new GridLayout(1,2));
+        gridOptions.add(rowSlider);
+        gridOptions.add(colSlider);
+        frameOptions.setLayout(new GridLayout(1,2));
+        frameOptions.add(frameSlider);
+        frameOptions.add(timeSlider);
         resetRight.setEnabled(false);
         resetLeft.setEnabled(false);
         animate.setEnabled(false);
@@ -92,14 +112,9 @@ public class JMorph extends JFrame {
         });
 
         uploadRight.addActionListener(manager);
-
         animate.addActionListener(manager);
-
-
         uploadLeft.addActionListener(manager);
-
         resetLeft.addActionListener(manager);
-
         resetRight.addActionListener(manager);
 
         timeSlider.setMajorTickSpacing(1);
@@ -111,20 +126,13 @@ public class JMorph extends JFrame {
         frameSlider.setPaintLabels(true);
 
         timeSlider.addChangeListener(manager);
-
         frameSlider.addChangeListener(manager);
+        rowSlider.addChangeListener(manager);
+        colSlider.addChangeListener(manager);
 
-
-        controls.add(uploadLeft);
-        controls.add(uploadRight);
-        controls.add(resetLeft);
-        controls.add(resetRight);
+        controls.add(leftImageOptions);
         controls.add(quit);
-        controls.add(animate);
-        controls.add(frameLabel);
-        controls.add(timeLabel);
-        controls.add(frameSlider);
-        controls.add(timeSlider);
+        controls.add(rightImageOptions);
         c.add(images, BorderLayout.NORTH);
         c.add(controls);
 
@@ -282,11 +290,19 @@ public class JMorph extends JFrame {
                     frameCounter.setDelay(1000/frames);
                 }
             }
+            else if(e.getSource() == rowSlider){
+                if(!rowSlider.getValueIsAdjusting()){
+                    rows = rowSlider.getValue();
+                }
+            }
+            else if(e.getSource() == colSlider){
+                if(!colSlider.getValueIsAdjusting()){
+                    cols = colSlider.getValue();
+                }
+            }
         }
 
     }
-
-
 
 
 }
