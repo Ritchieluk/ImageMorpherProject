@@ -331,6 +331,7 @@ public class JMorph extends JFrame {
                         newGreen = (int)(color.getGreen() + newBrightness) % 255;
                         color = new Color(newRed, newBlue, newGreen);
                         leftImage.setRGB(x, y, color.getRGB());
+                        //alkjsdfh
                     }
                 }
                 repaint();
