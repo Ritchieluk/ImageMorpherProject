@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class TriangleGrid implements Serializable {
     int width, height, trueWidth, trueHeight;
     Point[][] points;
+    Polygon[] triangles;
 
     public TriangleGrid(int w, int h, int trueW, int trueH) {
         width = w;
@@ -21,7 +22,7 @@ public class TriangleGrid implements Serializable {
 
     public Polygon[] setupGrid(){
         int triNum = (width-1) * (height - 1) *2;
-        Polygon[] triangles = new Polygon[triNum];
+        triangles = new Polygon[triNum];
 
         int count = 0;
         for(int i = 0; i< width -1; i++){
@@ -70,6 +71,20 @@ public class TriangleGrid implements Serializable {
     }
     public int getTrueHeight(){
         return trueHeight;
+    }
+    public String toString(){
+        String returnString = "";
+        for(int i = 0; i<width; i++){
+            for(int j = 0; j < height; j++){
+                returnString+=Integer.toString(points[i][j].x);
+                returnString+=Integer.toString(points[i][j].y);
+
+            }
+        }
+        return returnString;
+    }
+    public Polygon[] getTriangles(){
+        return triangles;
     }
 
 }

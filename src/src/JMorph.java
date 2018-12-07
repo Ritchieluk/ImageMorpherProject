@@ -1,5 +1,3 @@
-import jdk.nashorn.internal.runtime.ECMAErrors;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -9,8 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class JMorph extends JFrame {
 
@@ -18,7 +15,7 @@ public class JMorph extends JFrame {
     private GriddedImage leftGrid, rightGrid, previewGrid;
     private TriangleGrid oldGrid, newGrid, interGrid;
     private JPanel controls, images, rightPanel, leftPanel, leftImageOptions, rightImageOptions, gridOptions, gridText, frameOptions, frameText;
-    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph, leftBrighter, leftDarker;
+    private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph;
     private BufferedImage leftImage, rightImage, origLeft, origRight;
     private JSlider timeSlider, frameSlider, rowSlider, colSlider, rightBrightnessSlider, leftBrightnessSlider;
     private JLabel extra, timeLabel, frameLabel, leftBrightnessLabel, rightBrightnessLabel, rowLabel, colLabel;
@@ -32,24 +29,14 @@ public class JMorph extends JFrame {
 
 
 
-
+    // CLASS: JMorph
+    // PURPOSE: An instance of the JMorph class can alter two images and generate an animation of morphing between them
     public JMorph(){
         super("JMorph");
         setupGUI();
-        pack();
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                System.exit(0);
-            }
-        });
-        setResizable(false);
-        setVisible(true);
-
-
     }
-
+    // FUNCTION: setupGUI
+    // PURPOSE: creates and packs all of the elements in the GUI, adds the action listener, and adds them to the frame
     private void setupGUI(){
         Container c = this.getContentPane();
 
@@ -128,7 +115,7 @@ public class JMorph extends JFrame {
         uploadRight.addActionListener(manager);
 
         animate.addActionListener(manager);
-
+        saveMorph.addActionListener(manager);
 
         uploadLeft.addActionListener(manager);
 
@@ -189,8 +176,13 @@ public class JMorph extends JFrame {
 
         images.setPreferredSize(new Dimension(1000, 500));
         controls.setPreferredSize(new Dimension(100, 250));
-
+        pack();
+        addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){System.exit(0);}});
+        setResizable(false);
+        setVisible(true);
     }
+    // FUNCTION: createPreview
+    // PURPOSE: opens a new frame to contain a preview animation
     private void createPreview(){
        JFrame previewFrame = new JFrame("Animation");
        Container container = previewFrame.getContentPane();
@@ -201,6 +193,8 @@ public class JMorph extends JFrame {
        previewFrame.pack();
 
     }
+    // FUNCTION: resize
+    // PURPOSE: given an image it will set it to the given width and height
     public BufferedImage resize(BufferedImage image, int newWidth, int newHeight) {
         float height, width, scale;
         height = image.getHeight();
@@ -228,9 +222,9 @@ public class JMorph extends JFrame {
 
         return newImage;
     }
-
-
-    private TriangleGrid[] animate() {
+    // FUNCTION: animateGrid
+    // PURPOSE: generates an array of intermediate grids that can be displayed in sequence to resemble an animation
+    private TriangleGrid[] animateGrid() {
 
         TriangleGrid[] animatedGrid = new TriangleGrid[frames*seconds];
         for(frame = 0; frame < frames * seconds; frame++){
@@ -242,7 +236,8 @@ public class JMorph extends JFrame {
         frame = 0;
         return animatedGrid;
     }
-
+    // FUNCTION: intermediateGrid
+    // PURPOSE: generates a single intermediate grid based upon a fractional division determined by float a
     private static TriangleGrid intermediateGrid(TriangleGrid orig, TriangleGrid targ, float a){
         TriangleGrid inter = new TriangleGrid(targ.getWidth(), targ.getHeight(), targ.getTrueWidth(), targ.getTrueWidth());
         for(int i = 0; i < inter.getWidth(); i++){
@@ -254,17 +249,73 @@ public class JMorph extends JFrame {
         }
         return inter;
     }
+    // FUNCTION:
+    // PURPOSE:
+    public void saveJMorph()throws IOException {
+        JMorphFileContents jc = new JMorphFileContents();
+        jc.setContents();
+        String fileName = "", dir = ".";
+        int rVal = fc.showSaveDialog(this);
+        if(rVal == JFileChooser.APPROVE_OPTION){
+            fileName=fc.getSelectedFile().getName();
+            dir = fc.getCurrentDirectory().toString();
+            File file = new File(dir+"/"+fileName+".txt");
+            File newFolder = new File(dir+"/"+fileName);
+            boolean created = newFolder.mkdir();
+            if(created)
+                System.out.println("Folder created");
+            else
+                System.out.println("Unable to create Folder");
+            File leftImg = new File(dir+"/"+fileName+"/"+"leftImg.jpg");
+            File rightImg = new File(dir+"/"+fileName+"/"+"rightImg.jpg");
+            jc.setLeftImageLocation(leftImg.getPath());
+            jc.setRightImageLocation(rightImg.getPath());
+            saveImage(leftImage, leftImg);
+            saveImage(rightImage,rightImg);
+            String[] contents = jc.getContents();
+            for(int i = 0; i < contents.length; i++){
+                System.out.println(contents[i]);
+            }
+            PrintWriter writer = new PrintWriter(new FileWriter(file));
+            writer.print(fileName);
+            for(int i = 0; i < contents.length; i++){
+                writer.printf(System.getProperty("line.separator"));
+                writer.printf("%s",contents[i]);
+            }
+
+            writer.close();
+        }
+        if(rVal == JFileChooser.CANCEL_OPTION){
+            fileName = "You pressed cancel";
+            dir = ".";
+        }
 
 
+    }
+
+    public boolean saveImage(BufferedImage bi, File location){
+        try {
+            ImageIO.write(bi, "jpg", location);
+            return true;
+        } catch(IOException e){
+            return false;
+        }
+    }
+
+    private void uploadJMorph(){
+
+    }
 
     public static void main(String argv[]){
         JMorph morph = new JMorph();
     }
-
+    // CLASS: JMorphListener
+    // PURPOSE: combines ActionListener, ChangeListener, MouseMotionListener, and MoustListener
+    //          to accomplish all necessary action management that the JMorph requires
     public class JMorphListener implements ActionListener, ChangeListener, MouseMotionListener, MouseListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == animate) {
-                gridFrames = animate();
+                gridFrames = animateGrid();
                 previewGrid = new GriddedImage(leftImage, manager);
                 createPreview();
                 previewGrid.setGrid(gridFrames[0]);
@@ -334,6 +385,13 @@ public class JMorph extends JFrame {
                         animate.setEnabled(true);
                     }
                 }
+            }
+            else if(e.getSource()==saveMorph){
+                try {
+                    System.out.println("Saving Selected");
+                    saveJMorph();
+                }
+                catch(IOException ioe){System.out.println("Exception");}
             }
         }
         public void stateChanged(ChangeEvent e){
@@ -570,5 +628,46 @@ public class JMorph extends JFrame {
 
     }
 
+    public class JMorphFileContents {
+        private String leftImageLocation, rightImageLocation, fileName;
+        private int rowsC, colsC, framesC, secondsC, currentBrightnessLeft, currentBrightnessRight;
+        private TriangleGrid tGridLeft, tGridRight;
 
+        public void setContents(){
+            rowsC = rows;
+            colsC = cols;
+            framesC = frames;
+            secondsC = seconds;
+            currentBrightnessLeft = leftBrightnessSlider.getValue();
+            currentBrightnessRight = rightBrightnessSlider.getValue();
+            tGridLeft = oldGrid;
+            tGridRight = newGrid;
+        }
+
+        public String[] getContents(){
+            String[] contents ={
+                    leftImageLocation,
+                    rightImageLocation,
+                    Integer.toString(rowsC),
+                    Integer.toString(colsC),
+                    Integer.toString(framesC),
+                    Integer.toString(secondsC),
+                    Integer.toString(currentBrightnessLeft),
+                    Integer.toString(currentBrightnessRight),
+                    tGridLeft.toString(),
+                    tGridRight.toString(),
+            };
+            return contents;
+        }
+        public void setFileName(String fN){
+            fileName = fN;
+        }
+        public void setLeftImageLocation(String l){
+            leftImageLocation = l;
+        }
+        public void setRightImageLocation(String r){
+            rightImageLocation = r;
+        }
+
+    }
 }
