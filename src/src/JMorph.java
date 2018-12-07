@@ -1,3 +1,5 @@
+import jdk.nashorn.internal.runtime.ECMAErrors;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -15,7 +17,7 @@ public class JMorph extends JFrame {
     private int MAX_IMAGE_SIZE = 400;
     private GriddedImage leftGrid, rightGrid, previewGrid;
     private TriangleGrid oldGrid, newGrid, interGrid;
-    private JPanel controls, images, leftPanel, rightPanel, leftImageOptions, rightImageOptions, gridOptions, gridText, frameOptions, frameText;
+    private JPanel controls, images, rightPanel, leftPanel, leftImageOptions, rightImageOptions, gridOptions, gridText, frameOptions, frameText;
     private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph, leftBrighter, leftDarker;
     private BufferedImage leftImage, rightImage, origLeft, origRight;
     private JSlider timeSlider, frameSlider, rowSlider, colSlider, rightBrightnessSlider, leftBrightnessSlider;
@@ -293,6 +295,7 @@ public class JMorph extends JFrame {
                     leftImageUploaded = true;
                     leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                     leftGrid = new GriddedImage(leftImage, manager);
+                    leftGrid.setName("l");
                     oldGrid = leftGrid.getTriangleGrid();
                     leftPanel.add(leftGrid);
                     leftPanel.revalidate();
@@ -320,6 +323,7 @@ public class JMorph extends JFrame {
                     rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                     rightImageUploaded = true;
                     rightGrid = new GriddedImage(rightImage, manager);
+                    rightGrid.setName("r");
                     newGrid = rightGrid.getTriangleGrid();
                     rightPanel.add(rightGrid);
                     rightPanel.revalidate();
@@ -368,6 +372,7 @@ public class JMorph extends JFrame {
                         rows = rowSlider.getValue();
                         if(leftImageUploaded) {
                             leftGrid = new GriddedImage(leftImage, manager);
+                            leftGrid.setName("l");
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -376,6 +381,7 @@ public class JMorph extends JFrame {
                         }
                         if(rightImageUploaded){
                             rightGrid = new GriddedImage(rightImage, manager);
+                            rightGrid.setName("r");
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -388,6 +394,7 @@ public class JMorph extends JFrame {
                         rows = rowSlider.getValue();
                         if(leftImageUploaded) {
                             leftGrid = new GriddedImage(leftImage, manager);
+                            leftGrid.setName("l");
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -396,6 +403,7 @@ public class JMorph extends JFrame {
                         }
                         if(rightImageUploaded){
                             rightGrid = new GriddedImage(rightImage, manager);
+                            rightGrid.setName("r");
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -413,6 +421,7 @@ public class JMorph extends JFrame {
                         cols = colSlider.getValue();
                         if(leftImageUploaded) {
                             leftGrid = new GriddedImage(leftImage, manager);
+                            leftGrid.setName("l");
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -421,6 +430,7 @@ public class JMorph extends JFrame {
                         }
                         if(rightImageUploaded){
                             rightGrid = new GriddedImage(rightImage, manager);
+                            rightGrid.setName("r");
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -433,6 +443,7 @@ public class JMorph extends JFrame {
                         cols = colSlider.getValue();
                         if(leftImageUploaded) {
                             leftGrid = new GriddedImage(leftImage, manager);
+                            leftGrid.setName("l");
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -441,6 +452,7 @@ public class JMorph extends JFrame {
                         }
                         if(rightImageUploaded){
                             rightGrid = new GriddedImage(rightImage, manager);
+                            rightGrid.setName("r");
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -454,8 +466,8 @@ public class JMorph extends JFrame {
         public void mousePressed(MouseEvent e){
             int xPos = e.getX();
             int yPos = e.getY();
-
-            if(leftPanel.contains(xPos,yPos)){
+            GriddedImage temp = (GriddedImage) e.getSource();
+            if(temp.getName()=="l"){
                 for(int i = 0; i < leftGrid.getMidpointWidth(); i++){
                     for(int j = 0; j < leftGrid.getMidpointHeight(); j++){
                         Point curPoint = leftGrid.tGrid.points[i][j];
@@ -470,7 +482,7 @@ public class JMorph extends JFrame {
                     }
                 }
             }
-            else if(rightPanel.contains(xPos,yPos)){
+            else if(temp.getName()=="r"){
                 for(int i = 0; i < rightGrid.getMidpointWidth(); i++){
                     for(int j = 0; j < rightGrid.getMidpointHeight(); j++){
                         Point curPoint = rightGrid.tGrid.points[i][j];
@@ -492,33 +504,44 @@ public class JMorph extends JFrame {
             if(leftImageUploaded) {
                 leftGrid.setsRow(-1);
                 leftGrid.setsCol(-1);
+                leftGrid.repaint();
             }
             if(rightImageUploaded) {
                 rightGrid.setsRow(-1);
                 rightGrid.setsCol(-1);
+                rightGrid.repaint();
             }
         }
         public void mouseDragged(MouseEvent e){
             int xPos = e.getX();
             int yPos = e.getY();
-
-            if (leftPanel.contains(xPos, yPos)) {
+            GriddedImage temp = (GriddedImage) e.getSource();
+            System.out.println(temp.getName());
+            if (temp.getName()=="l") {
+                System.out.println("Detected in Left Panel");
+                if(rightImageUploaded) {
+                    rightGrid.setsRow(leftGrid.getsRow());
+                    rightGrid.setsCol(leftGrid.getsCol());
+                }
                 int[] xVals = leftGrid.getXBounds();
                 int[] yVals = leftGrid.getYBounds();
                 Polygon boundary = new Polygon(xVals, yVals, 6);
                 if(leftGrid.getsRow()!=-1 && leftGrid.getsCol() != -1 && (xPos > 0 && yPos > 0 && xPos < leftImage.getWidth() && yPos < leftImage.getHeight())){
-                    System.out.println("Preparing to move point in left grid");
                     if(boundary.contains(xPos, yPos)) {
-                        System.out.println("Point within boundary");
                         leftGrid.tGrid.points[leftGrid.getsRow()][leftGrid.getsCol()].x = xPos;
                         leftGrid.tGrid.points[leftGrid.getsRow()][leftGrid.getsCol()].y = yPos;
                         repaint();
                     }
                 }
             }
-            else if(rightPanel.contains(xPos, yPos)){
-                int[] xVals = {rightGrid.getsRow()-1, rightGrid.getsRow(), rightGrid.getsRow()+1, rightGrid.getsRow() +1, rightGrid.getsRow(), rightGrid.getsRow()-1};
-                int[] yVals = {rightGrid.getsCol()-1, rightGrid.getsCol()-1, rightGrid.getsCol(), rightGrid.getsCol()+1, rightGrid.getsCol()+1, rightGrid.getsCol()};
+            else if(temp.getName()=="r"){
+                System.out.println("Detected in Right Panel");
+                if(leftImageUploaded) {
+                    leftGrid.setsRow(rightGrid.getsRow());
+                    leftGrid.setsCol(rightGrid.getsCol());
+                }
+                int[] xVals = rightGrid.getXBounds();
+                int[] yVals = rightGrid.getYBounds();
                 Polygon boundary = new Polygon(xVals, yVals, 6);
                 if(rightGrid.getsRow()!=-1 && rightGrid.getsCol() != -1 && (xPos > 0 && yPos > 0 && xPos < rightImage.getWidth() && yPos < rightImage.getHeight())){
                     if(boundary.contains(xPos, yPos)) {

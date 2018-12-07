@@ -9,7 +9,8 @@ public class GriddedImage extends JPanel {
 
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow = -1, sCol = -1, rDiff, cDiff, radius = 5;
-    private Color circleColor = Color.BLACK, lineColor = Color.GREEN;
+    private Color circleColor = Color.BLACK, selectedColor = Color.BLUE, lineColor = Color.GREEN;
+    private String name;
     public TriangleGrid tGrid;
 
 
@@ -71,6 +72,10 @@ public class GriddedImage extends JPanel {
                     graphic.setColor(circleColor);
                     graphic.fillOval(rDiff - radius + (int) p.getX(), cDiff - radius + (int) p.getY(), 2 * radius, 2 * radius);
                 }
+                if(i == sRow && j == sCol){
+                    graphic.setColor(selectedColor);
+                    graphic.fillOval(rDiff - radius + (int) p.getX(), cDiff - radius + (int) p.getY(), 2 * radius, 2 * radius);
+                }
             }
         }
     }
@@ -93,6 +98,10 @@ public class GriddedImage extends JPanel {
     public int[] getYBounds(){
         int[] temp = {tGrid.points[sRow - 1][sCol - 1].y, tGrid.points[sRow][sCol - 1].y, tGrid.points[sRow + 1][sCol].y, tGrid.points[sRow + 1][sCol + 1].y, tGrid.points[sRow][sCol + 1].y, tGrid.points[sRow - 1][sCol].y};
         return temp;
+    }
+
+    public String getName(){
+        return name;
     }
 
     public int getRadius(){
@@ -121,6 +130,9 @@ public class GriddedImage extends JPanel {
     }
     public int getsCol(){
         return sCol;
+    }
+    public void setName(String newName){
+        name = newName;
     }
     public void setGrid(TriangleGrid g){
         tGrid = g;
