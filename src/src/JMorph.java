@@ -21,7 +21,7 @@ public class JMorph extends JFrame {
     private JLabel extra, timeLabel, frameLabel, leftBrightnessLabel, rightBrightnessLabel, rowLabel, colLabel;
     static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0;
     private Timer frameCounter;
-    boolean timestart = false;
+    boolean timestart = false, leftImageUploaded = false, rightImageUploaded = false;
     TriangleGrid[] gridFrames;
     final JFileChooser fc = new JFileChooser("./img");
 
@@ -277,8 +277,8 @@ public class JMorph extends JFrame {
                     }
                     ;
 
+                    leftImageUploaded = true;
                     leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                    //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
                     leftGrid = new GriddedImage(leftImage);
                     oldGrid = leftGrid.getTriangleGrid();
                     leftPanel.add(leftGrid);
@@ -304,8 +304,7 @@ public class JMorph extends JFrame {
                     ;
 
                     rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-
-                    //rightPanel.add(pls, BorderLayout.CENTER);
+                    rightImageUploaded = true;
                     rightGrid = new GriddedImage(rightImage);
                     newGrid = rightGrid.getTriangleGrid();
                     rightPanel.add(rightGrid);
@@ -345,7 +344,6 @@ public class JMorph extends JFrame {
                         newGreen = (int)(color.getGreen() + newBrightness) % 255;
                         color = new Color(newRed, newBlue, newGreen);
                         leftImage.setRGB(x, y, color.getRGB());
-                        //alkjsdfh
                     }
                 }
                 repaint();
@@ -358,20 +356,88 @@ public class JMorph extends JFrame {
                     if(rowSlider.getValue() == 0){
                         rows = 1;
                         rowSlider.setValue(rows);
+                        rows = rowSlider.getValue();
+                        if(leftImageUploaded) {
+                            leftGrid = new GriddedImage(leftImage);
+                            oldGrid = leftGrid.getTriangleGrid();
+                            leftPanel.removeAll();
+                            leftPanel.add(leftGrid);
+                            leftPanel.revalidate();
+                            leftPanel.repaint();
+                        }
+                        if(rightImageUploaded){
+                            rightGrid = new GriddedImage(rightImage);
+                            newGrid = rightGrid.getTriangleGrid();
+                            rightPanel.removeAll();
+                            rightPanel.add(rightGrid);
+                            rightPanel.revalidate();
+                            rightPanel.repaint();
+                        }
+
                     }
                     else {
                         rows = rowSlider.getValue();
+                        if(leftImageUploaded) {
+                            leftGrid = new GriddedImage(leftImage);
+                            oldGrid = leftGrid.getTriangleGrid();
+                            leftPanel.removeAll();
+                            leftPanel.add(leftGrid);
+                            leftPanel.revalidate();
+                            leftPanel.repaint();
+                        }
+                        if(rightImageUploaded){
+                            rightGrid = new GriddedImage(rightImage);
+                            newGrid = rightGrid.getTriangleGrid();
+                            rightPanel.removeAll();
+                            rightPanel.add(rightGrid);
+                            rightPanel.revalidate();
+                            rightPanel.repaint();
+                        }
                     }
                 }
             }
             else if(e.getSource() == colSlider){
                 if(!colSlider.getValueIsAdjusting()){
-                    if(colSlider.getValue()==0){
+                    if(colSlider.getValue() == 0){
                         cols = 1;
                         colSlider.setValue(cols);
+                        cols = colSlider.getValue();
+                        if(leftImageUploaded) {
+                            leftGrid = new GriddedImage(leftImage);
+                            oldGrid = leftGrid.getTriangleGrid();
+                            leftPanel.removeAll();
+                            leftPanel.add(leftGrid);
+                            leftPanel.revalidate();
+                            leftPanel.repaint();
+                        }
+                        if(rightImageUploaded){
+                            rightGrid = new GriddedImage(rightImage);
+                            newGrid = rightGrid.getTriangleGrid();
+                            rightPanel.removeAll();
+                            rightPanel.add(rightGrid);
+                            rightPanel.revalidate();
+                            rightPanel.repaint();
+                        }
+
                     }
                     else {
                         cols = colSlider.getValue();
+                        if(leftImageUploaded) {
+                            leftGrid = new GriddedImage(leftImage);
+                            oldGrid = leftGrid.getTriangleGrid();
+                            leftPanel.removeAll();
+                            leftPanel.add(leftGrid);
+                            leftPanel.revalidate();
+                            leftPanel.repaint();
+                        }
+                        if(rightImageUploaded){
+                            rightGrid = new GriddedImage(rightImage);
+                            newGrid = rightGrid.getTriangleGrid();
+                            rightPanel.removeAll();
+                            rightPanel.add(rightGrid);
+                            rightPanel.revalidate();
+                            rightPanel.repaint();
+                        }
                     }
                 }
             }
