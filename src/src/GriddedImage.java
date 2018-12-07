@@ -113,6 +113,10 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
     public int getsCol(){
         return sCol;
     }
+    public void setGrid(TriangleGrid g){
+        tGrid = g;
+        repaint();
+    }
     public void setsRow(int r){
         sRow = r;
     }

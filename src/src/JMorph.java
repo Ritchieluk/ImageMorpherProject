@@ -12,21 +12,24 @@ import java.io.IOException;
 public class JMorph extends JFrame {
 
     private int MAX_IMAGE_SIZE = 400;
-    private GriddedImage leftGrid, rightGrid;
-    private TriangleGrid oldGrid, newGrid;
+    private GriddedImage leftGrid, rightGrid, previewGrid;
+    private TriangleGrid oldGrid, newGrid, interGrid;
     private JPanel panel, controls, images, leftPanel, rightPanel;
     private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate;
     private BufferedImage leftImage, rightImage;
     private JSlider timeSlider, frameSlider;
     private JLabel extra, timeLabel, frameLabel;
-    static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3;
+    static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0;
     private Timer frameCounter;
     boolean timestart = false;
+    TriangleGrid[] gridFrames;
+
 
 
 
 
     public JMorph(){
+        super("JMorph");
         Container c = this.getContentPane();
 
         final JFileChooser fc = new JFileChooser(".");
@@ -53,9 +56,22 @@ public class JMorph extends JFrame {
         controls.setLayout(new GridLayout(5,2));
         resetRight.setEnabled(false);
         resetLeft.setEnabled(false);
+        animate.setEnabled(false);
 
         quit.addActionListener(e -> System.exit(0));
 
+        frameCounter = new Timer((1000/frames), e -> {
+            if(frameCount<gridFrames.length) {
+                previewGrid.setGrid(gridFrames[frameCount]);
+                System.out.println(frameCount);
+                frameCount++;
+            }
+            else {
+                frameCount = 0;
+                frameCounter.stop();
+
+            }
+        });
 
         uploadRight.addActionListener(
                 new ActionListener() {
@@ -78,6 +94,8 @@ public class JMorph extends JFrame {
                             rightPanel.revalidate();
                             rightGrid.repaint();
                             resetRight.setEnabled(true);
+                            animateCounter++;
+                            if (animateCounter == 2){animate.setEnabled(true);}
 
                         }
                     }
@@ -85,8 +103,14 @@ public class JMorph extends JFrame {
         );
 
         animate.addActionListener(e -> {
-            timestart = true;
+            gridFrames = animate();
+            previewGrid = leftGrid;
+            createPreview();
+            previewGrid.setGrid(gridFrames[0]);
+            frameCounter.start();
         });
+
+
         uploadLeft.addActionListener(
                 new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
@@ -107,6 +131,8 @@ public class JMorph extends JFrame {
                             leftPanel.revalidate();
                             leftPanel.repaint();
                             resetLeft.setEnabled(true);
+                            animateCounter++;
+                            if (animateCounter == 2){animate.setEnabled(true);}
                         }
                     }
                 }
@@ -134,7 +160,6 @@ public class JMorph extends JFrame {
                     public void stateChanged( ChangeEvent e )
                     {
                         seconds = timeSlider.getValue();
-                        System.out.println(seconds);
                     }
                 }
         );
@@ -146,7 +171,6 @@ public class JMorph extends JFrame {
                     {
                         if (frameSlider.getValue() == 0) {frames = 1;}
                         else {frames = frameSlider.getValue();}
-                        System.out.println(frames);
 
                     }
                 }
@@ -158,7 +182,7 @@ public class JMorph extends JFrame {
         controls.add(resetLeft);
         controls.add(resetRight);
         controls.add(quit);
-        controls.add(extra);
+        controls.add(animate);
         controls.add(frameLabel);
         controls.add(timeLabel);
         controls.add(frameSlider);
@@ -186,7 +210,16 @@ public class JMorph extends JFrame {
 
 
     }
+    private void createPreview(){
+       JFrame previewFrame = new JFrame("Animation");
+       Container container = previewFrame.getContentPane();
+       container.add(previewGrid, BorderLayout.CENTER);
 
+       previewFrame.setSize(400,400);
+       previewFrame.setVisible(true );
+       previewFrame.pack();
+
+    }
     public BufferedImage resize(BufferedImage image, int newWidth, int newHeight) {
         float height, width, scale;
         height = image.getHeight();
@@ -217,11 +250,12 @@ public class JMorph extends JFrame {
     private TriangleGrid[] animate() {
 
         TriangleGrid[] animatedGrid = new TriangleGrid[frames*seconds];
-        for(int i = 0; i < frames * seconds; i++){
+        for(frame = 0; frame < frames * seconds; frame++){
             float alpha = frame * 1 / (float) (frames * seconds - 1);
             TriangleGrid intermediateGrids = intermediateGrid(oldGrid, newGrid, alpha);
-            animatedGrid[i] = intermediateGrids;
+            animatedGrid[frame] = intermediateGrids;
         }
+        frame = 0;
         return animatedGrid;
     }
 
