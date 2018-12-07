@@ -17,8 +17,8 @@ public class JMorph extends JFrame {
     private JPanel controls, images, leftPanel, rightPanel, leftImageOptions, rightImageOptions, centralOptions, gridOptions, frameOptions;
     private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph;
     private BufferedImage leftImage, rightImage;
-    private JSlider timeSlider, frameSlider, rowSlider, colSlider;
-    private JLabel extra, timeLabel, frameLabel;
+    private JSlider timeSlider, frameSlider, rowSlider, colSlider, rightBrightnessSlider, leftBrightnessSlider;
+    private JLabel extra, timeLabel, frameLabel, leftBrightnessLabel, rightBrightnessLabel;
     static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0;
     private Timer frameCounter;
     boolean timestart = false;
@@ -48,7 +48,6 @@ public class JMorph extends JFrame {
 
     private void setupGUI(){
         Container c = this.getContentPane();
-
         images = new JPanel();
         leftImageOptions = new JPanel();
         rightImageOptions = new JPanel();
@@ -68,11 +67,15 @@ public class JMorph extends JFrame {
         uploadMorph = new JButton("Upload Morph");
         timeSlider = new JSlider(1,5,3);
         frameSlider = new JSlider(0, 30, 30);
+        leftBrightnessSlider = new JSlider(1, 10, 5);
+        rightBrightnessSlider = new JSlider(1, 10, 5);
         rowSlider = new JSlider(1, 20, rows);
         colSlider = new JSlider(1, 20, cols);
         extra = new JLabel("");
-        timeLabel = new JLabel("Adjust how many seconds the animation will run for.");
-        frameLabel = new JLabel("Adjust how many frames are shown per second during the animation.");
+        leftBrightnessLabel = new JLabel("Adjust Left Brightness");
+        rightBrightnessLabel = new JLabel("Adjust Right Brightness");
+        timeLabel = new JLabel("Adjust how many seconds the animation will run for");
+        frameLabel = new JLabel("Adjust how many frames are shown per second during the animation");
         images.setLayout(new GridLayout(1,2));
         images.add(leftPanel);
         images.add(rightPanel);
@@ -112,9 +115,14 @@ public class JMorph extends JFrame {
         });
 
         uploadRight.addActionListener(manager);
+
         animate.addActionListener(manager);
+
+
         uploadLeft.addActionListener(manager);
+
         resetLeft.addActionListener(manager);
+
         resetRight.addActionListener(manager);
 
         timeSlider.setMajorTickSpacing(1);
@@ -124,12 +132,33 @@ public class JMorph extends JFrame {
         frameSlider.setMajorTickSpacing(10);
         frameSlider.setPaintTicks(true);
         frameSlider.setPaintLabels(true);
+        leftBrightnessSlider.setMajorTickSpacing(1);
+        leftBrightnessSlider.setPaintTicks(true);
+        leftBrightnessSlider.setPaintLabels(true);
+        rightBrightnessSlider.setMajorTickSpacing(1);
+        rightBrightnessSlider.setPaintTicks(true);
+        rightBrightnessSlider.setPaintLabels(true);
+
 
         timeSlider.addChangeListener(manager);
+
         frameSlider.addChangeListener(manager);
         rowSlider.addChangeListener(manager);
         colSlider.addChangeListener(manager);
 
+        leftBrightnessSlider.addChangeListener(manager);
+
+        rightBrightnessSlider.addChangeListener(manager);
+
+
+        controls.add(leftBrightnessLabel);
+        controls.add(rightBrightnessLabel);
+        controls.add(leftBrightnessSlider);
+        controls.add(rightBrightnessSlider);
+        controls.add(uploadLeft);
+        controls.add(uploadRight);
+        controls.add(resetLeft);
+        controls.add(resetRight);
         controls.add(leftImageOptions);
         controls.add(quit);
         controls.add(rightImageOptions);
@@ -289,6 +318,25 @@ public class JMorph extends JFrame {
                     frames = frameSlider.getValue();
                     frameCounter.setDelay(1000/frames);
                 }
+            }
+            else if(e.getSource() == leftBrightnessSlider){
+                float newBrightness;
+                int newRed, newBlue, newGreen;
+                for(int x = 0;x < leftImage.getWidth(); x++){
+                    for(int y = 0;y < leftImage.getHeight();y++){
+                        Color color = new Color(leftImage.getRGB(x, y));
+                        newBrightness = leftBrightnessSlider.getValue() / (float)10;
+                        newRed = (int)(color.getRed() + newBrightness) % 255;
+                        newBlue = (int)(color.getBlue() + newBrightness) % 255;
+                        newGreen = (int)(color.getGreen() + newBrightness) % 255;
+                        color = new Color(newRed, newBlue, newGreen);
+                        leftImage.setRGB(x, y, color.getRGB());
+                    }
+                }
+                repaint();
+            }
+            else if(e.getSource() == rightBrightnessSlider){
+
             }
             else if(e.getSource() == rowSlider){
                 if(!rowSlider.getValueIsAdjusting()){
