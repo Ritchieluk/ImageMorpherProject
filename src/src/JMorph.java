@@ -19,7 +19,7 @@ public class JMorph extends JFrame {
     private BufferedImage leftImage, rightImage;
     private JSlider timeSlider, frameSlider, rowSlider, colSlider;
     private JLabel extra, timeLabel, frameLabel;
-    static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0, waitTime;
+    static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0;
     private Timer frameCounter;
     boolean timestart = false;
     TriangleGrid[] gridFrames;
@@ -62,10 +62,9 @@ public class JMorph extends JFrame {
 
         quit.addActionListener(e -> System.exit(0));
 
-        frameCounter = new Timer((waitTime), e -> {
+        frameCounter = new Timer((1000/frames), e -> {
             if(frameCount<gridFrames.length) {
                 previewGrid.setGrid(gridFrames[frameCount]);
-                //System.out.println((1000/frames));
                 frameCount++;
             }
             else {
@@ -88,8 +87,6 @@ public class JMorph extends JFrame {
                             } catch (IOException e1){};
 
                             rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-
-                            //rightPanel.add(pls, BorderLayout.CENTER);
                             rightGrid = new GriddedImage(rightImage);
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.add(rightGrid);
@@ -106,7 +103,7 @@ public class JMorph extends JFrame {
 
         animate.addActionListener(e -> {
             gridFrames = animate();
-            previewGrid = leftGrid;
+            previewGrid = new GriddedImage(leftImage);
             createPreview();
             previewGrid.setGrid(gridFrames[0]);
             frameCounter.start();
@@ -126,7 +123,6 @@ public class JMorph extends JFrame {
                             } catch (IOException e1){};
 
                             leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                            //pls = new JLabel("", new ImageIcon(leftImage), JLabel.CENTER);
                             leftGrid = new GriddedImage(leftImage);
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.add(leftGrid);
@@ -173,6 +169,7 @@ public class JMorph extends JFrame {
                     {
                         if (frameSlider.getValue() == 0) {frames = 1;}
                         else {frames = frameSlider.getValue();}
+                        frameCounter.setDelay(1000/frames);
 
                     }
                 }
@@ -191,7 +188,6 @@ public class JMorph extends JFrame {
         controls.add(timeSlider);
         c.add(images, BorderLayout.NORTH);
         c.add(controls);
-        //add(c);
 
         images.setPreferredSize(new Dimension(1000, 500));
         controls.setPreferredSize(new Dimension(100, 250));
@@ -262,11 +258,11 @@ public class JMorph extends JFrame {
     }
 
     private static TriangleGrid intermediateGrid(TriangleGrid orig, TriangleGrid targ, float a){
-        TriangleGrid inter = new TriangleGrid(orig.getWidth(), orig.getHeight(), orig.getTrueWidth(), orig.getTrueWidth());
+        TriangleGrid inter = new TriangleGrid(targ.getWidth(), targ.getHeight(), targ.getTrueWidth(), targ.getTrueWidth());
         for(int i = 0; i < inter.getWidth(); i++){
             for(int j = 0; j <inter.getHeight(); j++){
-                inter.points[i][j].x = (int) (a * orig.points[i][j].x + (1-a) * targ.points[i][j].x);
-                inter.points[j][j].y = (int) (a * orig.points[i][j].y + (1-a) * targ.points[i][j].y);
+                inter.points[i][j].x = (int) (a * targ.points[i][j].x + (1-a) * orig.points[i][j].x);
+                inter.points[i][j].y = (int) (a * targ.points[i][j].y + (1-a) * orig.points[i][j].y);
             }
 
         }
