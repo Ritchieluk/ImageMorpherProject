@@ -9,8 +9,9 @@ public class GriddedImage extends JPanel {
 
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow = -1, sCol = -1, rDiff, cDiff, radius = 5;
-    private Color circleColor = Color.BLACK, selectedColor = Color.BLUE, lineColor = Color.GREEN;
+    private Color circleColor = Color.BLACK, selectedColor = Color.BLUE, lineColor = Color.GREEN, rectangleColor = Color.BLUE;
     private String name;
+    private Polygon rectangle;
     public TriangleGrid tGrid;
 
 
@@ -22,6 +23,7 @@ public class GriddedImage extends JPanel {
     public GriddedImage(BufferedImage pic1, JMorph.JMorphListener manager){
         super();
         img = pic1;
+        rectangle = new Polygon();
 
 
         if(img.getWidth() == -1) {
@@ -84,6 +86,7 @@ public class GriddedImage extends JPanel {
         rDiff = 0; cDiff = 0;
         graphic.drawImage(img, rDiff, cDiff, this);
         createGrid(graphic, rDiff, cDiff);
+        drawRectangle(graphic, rectangle);
     }
 
     public void reset(){
@@ -98,6 +101,15 @@ public class GriddedImage extends JPanel {
     public int[] getYBounds(){
         int[] temp = {tGrid.points[sRow - 1][sCol - 1].y, tGrid.points[sRow][sCol - 1].y, tGrid.points[sRow + 1][sCol].y, tGrid.points[sRow + 1][sCol + 1].y, tGrid.points[sRow][sCol + 1].y, tGrid.points[sRow - 1][sCol].y};
         return temp;
+    }
+
+    public void drawRectangle(Graphics graphic, Polygon rectangle){
+        graphic.setColor(rectangleColor);
+        graphic.drawPolygon(rectangle);
+    }
+
+    public void setRectangle(Polygon newRectangle){
+        rectangle = newRectangle;
     }
 
     public String getName(){
