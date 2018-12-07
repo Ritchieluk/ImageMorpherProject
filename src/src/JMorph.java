@@ -75,8 +75,8 @@ public class JMorph extends JFrame {
         frameSlider = new JSlider(0, 30, 30);
         leftBrightnessSlider = new JSlider(1, 50, 25);
         rightBrightnessSlider = new JSlider(1, 50, 25);
-        rowSlider = new JSlider(0, 20, rows);
-        colSlider = new JSlider(0, 20, cols);
+        rowSlider = new JSlider(5, 20, rows);
+        colSlider = new JSlider(5, 20, cols);
         extra = new JLabel("");
         leftBrightnessLabel = new JLabel("Adjust Left Brightness");
         rightBrightnessLabel = new JLabel("Adjust Right Brightness");
