@@ -17,7 +17,7 @@ public class JMorph extends JFrame {
     private JPanel panel, controls, images, leftPanel, rightPanel;
     private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate;
     private BufferedImage leftImage, rightImage;
-    private JSlider timeSlider, frameSlider;
+    private JSlider timeSlider, frameSlider, rowSlider, colSlider;
     private JLabel extra, timeLabel, frameLabel;
     static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0, waitTime;
     private Timer frameCounter;
@@ -46,6 +46,8 @@ public class JMorph extends JFrame {
         animate = new JButton("Animate");
         timeSlider = new JSlider(1,5,3);
         frameSlider = new JSlider(0, 30, 30);
+        rowSlider = new JSlider(1, 20, rows);
+        colSlider = new JSlider(1, 20, cols);
         extra = new JLabel("");
         timeLabel = new JLabel("Adjust how many seconds the animation will run for.");
         frameLabel = new JLabel("Adjust how many frames are shown per second during the animation.");
@@ -274,7 +276,18 @@ public class JMorph extends JFrame {
 
 
     public static void main(String argv[]){
-        JMorph please = new JMorph();
+        JMorph morph = new JMorph();
+    }
+
+    public class JMorphListener implements ActionListener, ChangeListener{
+        public void actionPerformed(ActionEvent e){
+
+
+        }
+        public void stateChanged(ChangeEvent e){
+
+        }
+
     }
 
 
