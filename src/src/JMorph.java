@@ -24,6 +24,7 @@ public class JMorph extends JFrame {
     boolean timestart = false, leftImageUploaded = false, rightImageUploaded = false;
     TriangleGrid[] gridFrames;
     final JFileChooser fc = new JFileChooser("./img");
+    JMorphListener manager;
 
 
 
@@ -105,7 +106,7 @@ public class JMorph extends JFrame {
         resetRight.setEnabled(false);
         resetLeft.setEnabled(false);
         animate.setEnabled(false);
-        JMorphListener manager = new JMorphListener();
+        manager = new JMorphListener();
 
         quit.addActionListener(manager);
 
@@ -248,7 +249,7 @@ public class JMorph extends JFrame {
         JMorph morph = new JMorph();
     }
 
-    public class JMorphListener implements ActionListener, ChangeListener{
+    public class JMorphListener implements ActionListener, ChangeListener, MouseMotionListener, MouseListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == animate) {
                 gridFrames = animate();
@@ -279,7 +280,7 @@ public class JMorph extends JFrame {
 
                     leftImageUploaded = true;
                     leftImage = resize(leftImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-                    leftGrid = new GriddedImage(leftImage);
+                    leftGrid = new GriddedImage(leftImage, manager);
                     oldGrid = leftGrid.getTriangleGrid();
                     leftPanel.add(leftGrid);
                     leftPanel.revalidate();
@@ -305,7 +306,7 @@ public class JMorph extends JFrame {
 
                     rightImage = resize(rightImage, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
                     rightImageUploaded = true;
-                    rightGrid = new GriddedImage(rightImage);
+                    rightGrid = new GriddedImage(rightImage, manager);
                     newGrid = rightGrid.getTriangleGrid();
                     rightPanel.add(rightGrid);
                     rightPanel.revalidate();
@@ -358,7 +359,7 @@ public class JMorph extends JFrame {
                         rowSlider.setValue(rows);
                         rows = rowSlider.getValue();
                         if(leftImageUploaded) {
-                            leftGrid = new GriddedImage(leftImage);
+                            leftGrid = new GriddedImage(leftImage, manager);
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -366,7 +367,7 @@ public class JMorph extends JFrame {
                             leftPanel.repaint();
                         }
                         if(rightImageUploaded){
-                            rightGrid = new GriddedImage(rightImage);
+                            rightGrid = new GriddedImage(rightImage, manager);
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -378,7 +379,7 @@ public class JMorph extends JFrame {
                     else {
                         rows = rowSlider.getValue();
                         if(leftImageUploaded) {
-                            leftGrid = new GriddedImage(leftImage);
+                            leftGrid = new GriddedImage(leftImage, manager);
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -386,7 +387,7 @@ public class JMorph extends JFrame {
                             leftPanel.repaint();
                         }
                         if(rightImageUploaded){
-                            rightGrid = new GriddedImage(rightImage);
+                            rightGrid = new GriddedImage(rightImage, manager);
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -403,7 +404,7 @@ public class JMorph extends JFrame {
                         colSlider.setValue(cols);
                         cols = colSlider.getValue();
                         if(leftImageUploaded) {
-                            leftGrid = new GriddedImage(leftImage);
+                            leftGrid = new GriddedImage(leftImage, manager);
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -411,7 +412,7 @@ public class JMorph extends JFrame {
                             leftPanel.repaint();
                         }
                         if(rightImageUploaded){
-                            rightGrid = new GriddedImage(rightImage);
+                            rightGrid = new GriddedImage(rightImage, manager);
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -423,7 +424,7 @@ public class JMorph extends JFrame {
                     else {
                         cols = colSlider.getValue();
                         if(leftImageUploaded) {
-                            leftGrid = new GriddedImage(leftImage);
+                            leftGrid = new GriddedImage(leftImage, manager);
                             oldGrid = leftGrid.getTriangleGrid();
                             leftPanel.removeAll();
                             leftPanel.add(leftGrid);
@@ -431,7 +432,7 @@ public class JMorph extends JFrame {
                             leftPanel.repaint();
                         }
                         if(rightImageUploaded){
-                            rightGrid = new GriddedImage(rightImage);
+                            rightGrid = new GriddedImage(rightImage, manager);
                             newGrid = rightGrid.getTriangleGrid();
                             rightPanel.removeAll();
                             rightPanel.add(rightGrid);
@@ -442,6 +443,99 @@ public class JMorph extends JFrame {
                 }
             }
         }
+        public void mousePressed(MouseEvent e){
+            int xPos = e.getX();
+            int yPos = e.getY();
+
+            if(leftPanel.contains(xPos,yPos)){
+                for(int i = 0; i < leftGrid.getMidpointWidth(); i++){
+                    for(int j = 0; j < leftGrid.getMidpointHeight(); j++){
+                        Point curPoint = leftGrid.tGrid.points[i][j];
+                        if(curPoint.distance(xPos, yPos) <= leftGrid.getRadius()){
+                            if(i != 0 && i!= leftGrid.getMidpointWidth() -1 && j!=0 && j!= leftGrid.getMidpointHeight() -1){
+                                leftGrid.setsRow(i);
+                                leftGrid.setsCol(j);
+                                System.out.println("Selected Row: "+i+" Selected Col: "+j);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            else if(rightPanel.contains(xPos,yPos)){
+                for(int i = 0; i < rightGrid.getMidpointWidth(); i++){
+                    for(int j = 0; j < rightGrid.getMidpointHeight(); j++){
+                        Point curPoint = rightGrid.tGrid.points[i][j];
+                        if(curPoint.distance(xPos, yPos) <= rightGrid.getRadius()){
+                            if(i != 0 && i!= rightGrid.getMidpointWidth() -1 && j!=0 && j!= rightGrid.getMidpointHeight() -1){
+                                rightGrid.setsRow(i);
+                                rightGrid.setsCol(j);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+        }
+        public void mouseReleased(MouseEvent e){
+            if(leftImageUploaded) {
+                leftGrid.setsRow(-1);
+                leftGrid.setsCol(-1);
+            }
+            if(rightImageUploaded) {
+                rightGrid.setsRow(-1);
+                rightGrid.setsCol(-1);
+            }
+        }
+        public void mouseDragged(MouseEvent e){
+            int xPos = e.getX();
+            int yPos = e.getY();
+
+            if (leftPanel.contains(xPos, yPos)) {
+                int[] xVals = leftGrid.getXBounds();
+                int[] yVals = leftGrid.getYBounds();
+                Polygon boundary = new Polygon(xVals, yVals, 6);
+                if(leftGrid.getsRow()!=-1 && leftGrid.getsCol() != -1 && (xPos > 0 && yPos > 0 && xPos < leftImage.getWidth() && yPos < leftImage.getHeight())){
+                    System.out.println("Preparing to move point in left grid");
+                    if(boundary.contains(xPos, yPos)) {
+                        System.out.println("Point within boundary");
+                        leftGrid.tGrid.points[leftGrid.getsRow()][leftGrid.getsCol()].x = xPos;
+                        leftGrid.tGrid.points[leftGrid.getsRow()][leftGrid.getsCol()].y = yPos;
+                        repaint();
+                    }
+                }
+            }
+            else if(rightPanel.contains(xPos, yPos)){
+                int[] xVals = {rightGrid.getsRow()-1, rightGrid.getsRow(), rightGrid.getsRow()+1, rightGrid.getsRow() +1, rightGrid.getsRow(), rightGrid.getsRow()-1};
+                int[] yVals = {rightGrid.getsCol()-1, rightGrid.getsCol()-1, rightGrid.getsCol(), rightGrid.getsCol()+1, rightGrid.getsCol()+1, rightGrid.getsCol()};
+                Polygon boundary = new Polygon(xVals, yVals, 6);
+                if(rightGrid.getsRow()!=-1 && rightGrid.getsCol() != -1 && (xPos > 0 && yPos > 0 && xPos < rightImage.getWidth() && yPos < rightImage.getHeight())){
+                    if(boundary.contains(xPos, yPos)) {
+                        rightGrid.tGrid.points[rightGrid.getsRow()][rightGrid.getsCol()].x = xPos;
+                        rightGrid.tGrid.points[rightGrid.getsRow()][rightGrid.getsCol()].y = yPos;
+                        repaint();
+                    }
+                }
+            }
+
+
+
+        }
+        public void mouseMoved(MouseEvent e) {
+        }
+
+        public void mouseClicked(MouseEvent e) {
+        }
+
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        public void mouseExited(MouseEvent e) {
+        }
+
 
     }
 

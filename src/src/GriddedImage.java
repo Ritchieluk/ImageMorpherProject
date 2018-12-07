@@ -5,7 +5,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
-public class GriddedImage extends JPanel implements MouseMotionListener, MouseListener {
+public class GriddedImage extends JPanel {
 
     public BufferedImage img = null;
     private int width, height, midpointWidth, midpointHeight, sRow = -1, sCol = -1, rDiff, cDiff, radius = 5;
@@ -13,12 +13,12 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
     public TriangleGrid tGrid;
 
 
-    public GriddedImage(BufferedImage pic1, TriangleGrid g){
-        new GriddedImage(pic1);
+    public GriddedImage(BufferedImage pic1, TriangleGrid g, JMorph.JMorphListener manager){
+        new GriddedImage(pic1, manager);
         tGrid = g;
     }
 
-    public GriddedImage(BufferedImage pic1){
+    public GriddedImage(BufferedImage pic1, JMorph.JMorphListener manager){
         super();
         img = pic1;
 
@@ -41,8 +41,8 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
 
 
 
-        addMouseListener(this);
-        addMouseMotionListener(this);
+        addMouseListener(manager);
+        addMouseMotionListener(manager);
         setPreferredSize(new Dimension(width, height));
     }
 
@@ -84,6 +84,15 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
     public void reset(){
         tGrid.reset();
         repaint();
+    }
+
+    public int[] getXBounds() {
+        int[] temp = {tGrid.points[sRow - 1][sCol - 1].x, tGrid.points[sRow][sCol - 1].x, tGrid.points[sRow + 1][sCol].x, tGrid.points[sRow + 1][sCol + 1].x, tGrid.points[sRow][sCol + 1].x, tGrid.points[sRow - 1][sCol].x};
+        return temp;
+    }
+    public int[] getYBounds(){
+        int[] temp = {tGrid.points[sRow - 1][sCol - 1].y, tGrid.points[sRow][sCol - 1].y, tGrid.points[sRow + 1][sCol].y, tGrid.points[sRow + 1][sCol + 1].y, tGrid.points[sRow][sCol + 1].y, tGrid.points[sRow - 1][sCol].y};
+        return temp;
     }
 
     public int getRadius(){
@@ -138,49 +147,6 @@ public class GriddedImage extends JPanel implements MouseMotionListener, MouseLi
     }
 
 
-    public void mousePressed(MouseEvent e){
-        int xPos = e.getX() - rDiff;
-        int yPos = e.getY() - cDiff;
-
-        for(int i = 0; i < midpointWidth; i++){
-            for(int j = 0; j < midpointHeight; j++){
-                Point curPoint = tGrid.points[i][j];
-                if(curPoint.distance(xPos, yPos) <= radius){
-                    if(i != 0 && i!=midpointWidth -1 && j!=0 && j!= midpointHeight -1){
-                        sRow = i;
-                        sCol = j;
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    public void mouseReleased(MouseEvent e){
-        sRow = -1;
-        sCol = -1;
-    }
-    public void mouseDragged(MouseEvent e){
-        int xPos = e.getX() - rDiff;
-        int yPos = e.getY() - cDiff;
-
-        if(sRow!=-1 && sCol != -1 && (xPos > 0 && yPos > 0 && xPos < img.getWidth() && yPos < img.getHeight())){
-            tGrid.points[sRow][sCol].x = xPos;
-            tGrid.points[sRow][sCol].y = yPos;
-            repaint();
-        }
-
-    }
-    public void mouseMoved(MouseEvent e) {
-    }
-
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    public void mouseExited(MouseEvent e) {
-    }
 
 
 }
