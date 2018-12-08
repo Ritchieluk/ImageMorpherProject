@@ -312,7 +312,7 @@ public class JMorph extends JFrame {
 
     public boolean saveImage(BufferedImage bi, File location){
         try {
-            ImageIO.write(bi, "jpg", location);
+            ImageIO.write(bi, "JPG", location);
             return true;
         } catch(IOException e){
             return false;
@@ -320,7 +320,7 @@ public class JMorph extends JFrame {
     }
 
     private void uploadJMorph(){
-
+        JMorphFileContents uc = new JMorphFileContents();
     }
 
     public static void main(String argv[]){
@@ -718,6 +718,29 @@ public class JMorph extends JFrame {
         private int rowsC, colsC, framesC, secondsC, currentBrightnessLeft, currentBrightnessRight;
         private TriangleGrid tGridLeft, tGridRight;
 
+        public void adjustJMorph(){
+            rows = rowsC;
+            rowSlider.setValue(rowsC);
+            cols = colsC;
+            colSlider.setValue(colsC);
+            frames = framesC;
+            frameSlider.setValue(framesC);
+            seconds = secondsC;
+            timeSlider.setValue(secondsC);
+            oldGrid = tGridLeft;
+            newGrid = tGridRight;
+            float value = (float) currentBrightnessLeft;
+            float scalefactor = 2 * value / leftBrightnessSlider.getMaximum();
+            RescaleOp op = new RescaleOp(scalefactor, 0, null);
+            leftImage = op.filter(origLeft, leftImage);
+            value = (float) currentBrightnessRight;
+            scalefactor = 2 * value / rightBrightnessSlider.getMaximum();
+            op = new RescaleOp(scalefactor, 0, null);
+            rightImage = op.filter(origRight, rightImage);
+            repaint();
+
+        }
+
         public void setContents(){
             rowsC = rows;
             colsC = cols;
@@ -746,6 +769,24 @@ public class JMorph extends JFrame {
         }
         public void setFileName(String fN){
             fileName = fN;
+        }
+        public void setRowsC(int r){
+            rowsC = r;
+        }
+        public void setColsC(int c){
+            colsC = c;
+        }
+        public void setFramesC(int c){
+            framesC = c;
+        }
+        public void setSecondsC(int s){
+            secondsC = s;
+        }
+        public void settGridLeft(TriangleGrid g){
+            tGridLeft = g;
+        }
+        public void settGridRight(TriangleGrid g){
+            tGridRight = g;
         }
         public void setLeftImageLocation(String l){
             leftImageLocation = l;
