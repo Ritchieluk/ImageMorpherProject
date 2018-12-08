@@ -266,6 +266,27 @@ public class JMorph extends JFrame {
         }
         return inter;
     }
+
+    private BufferedImage[] morph(BufferedImage image, GriddedImage grid){
+        grid.tGrid.setupGrid();
+        BufferedImage[] morphed = new BufferedImage[frames*seconds];
+        Polygon[] triangles = grid.tGrid.getTriangles();
+        int x1, x2, x3, y1, y2, y3;
+
+        x1 = triangles[0].xpoints[0];
+        x2 = triangles[0].xpoints[1];
+        x3 = triangles[0].xpoints[2];
+        y1 = triangles[0].ypoints[0];
+        y2 = triangles[0].ypoints[1];
+        y3 = triangles[0].ypoints[2];
+        System.out.println(x1 + " " + x2 + " " + x3 + " " + y1 + " " + y2 + " " + y3);
+
+
+
+
+
+        return morphed;
+    }
     // FUNCTION:
     // PURPOSE:
     public void saveJMorph()throws IOException {
@@ -337,6 +358,7 @@ public class JMorph extends JFrame {
                 createPreview();
                 previewGrid.setGrid(gridFrames[0]);
                 frameCounter.start();
+                morph(leftImage, leftGrid);
             } else if (e.getSource() == quit) {
                 System.exit(0);
             }
@@ -392,6 +414,7 @@ public class JMorph extends JFrame {
                     rightImageUploaded = true;
                     rightGrid = new GriddedImage(rightImage, manager);
                     rightGrid.setName("r");
+                    rightGrid.tGrid.setupGrid();
                     newGrid = rightGrid.getTriangleGrid();
                     rightPanel.add(rightGrid);
                     rightPanel.revalidate();
@@ -620,8 +643,8 @@ public class JMorph extends JFrame {
             }
             pointClicked = false;
         }
-        public void mouseDragged(MouseEvent e){
-            if(pointClicked) {
+        public void mouseDragged(MouseEvent e) {
+            if (pointClicked) {
                 int xPos = e.getX();
                 int yPos = e.getY();
                 GriddedImage temp = (GriddedImage) e.getSource();
@@ -659,10 +682,10 @@ public class JMorph extends JFrame {
                         }
                     }
                 }
-            }
-            GriddedImage temp = (GriddedImage) e.getSource();
+            } else {
+                GriddedImage temp = (GriddedImage) e.getSource();
                 if (temp.getName() == "l") {
-                    if(!leftRectangle.contains(startX, startY)) {
+                    if (!leftRectangle.contains(startX, startY)) {
                         rectGrid = "l";
                         endX = e.getX();
                         endY = e.getY();
@@ -676,9 +699,8 @@ public class JMorph extends JFrame {
                         repaint();
                     }
 
-                }
-                else if (temp.getName() == "r") {
-                    if(!rightRectangle.contains(startX, startY)) {
+                } else if (temp.getName() == "r") {
+                    if (!rightRectangle.contains(startX, startY)) {
                         rectGrid = "r";
                         endX = e.getX();
                         endY = e.getY();
@@ -693,7 +715,7 @@ public class JMorph extends JFrame {
                     }
                 }
             }
-
+        }
 
 
 
