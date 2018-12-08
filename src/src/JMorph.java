@@ -730,9 +730,6 @@ public class JMorph extends JFrame {
                     }
                 }
             }
-            else if() {
-
-            }
             else{
                 GriddedImage temp = (GriddedImage) e.getSource();
                 if (temp.getName() == "l") {
