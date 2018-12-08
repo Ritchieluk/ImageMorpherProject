@@ -16,11 +16,12 @@ import java.io.*;
 public class JMorph extends JFrame {
 
     private int MAX_IMAGE_SIZE = 400;
+    private JFrame morphFrame;
     private GriddedImage leftGrid, rightGrid, previewGrid;
     private TriangleGrid oldGrid, newGrid, interGrid;
     private JPanel controls, images, rightPanel, leftPanel, leftImageOptions, rightImageOptions, gridOptions, gridText, frameOptions, frameText;
     private JButton uploadLeft, uploadRight, quit, resetLeft, resetRight, animate, saveMorph, uploadMorph, leftBrighter, leftDarker;
-    private BufferedImage leftImage, rightImage, origLeft, origRight;
+    private BufferedImage leftImage, rightImage, origLeft, origRight, morphFrames[];
     private JSlider timeSlider, frameSlider, rowSlider, colSlider, rightBrightnessSlider, leftBrightnessSlider;
     private JLabel extra, timeLabel, frameLabel, leftBrightnessLabel, rightBrightnessLabel, rowLabel, colLabel;
     static int rows = 11, cols = 11, frame = 0, frames = 30, seconds = 3, frameCount = 0, animateCounter = 0;
@@ -211,6 +212,17 @@ public class JMorph extends JFrame {
        previewFrame.pack();
 
     }
+
+    private void createMorph(BufferedImage[] morphFrames){
+        morphFrame = new JFrame("Morph");
+        Container container = morphFrame.getContentPane();
+        JPanel pls = new JPanel();
+        pls.add(new JLabel(new ImageIcon(morphFrames[0])));
+        container.add(pls, BorderLayout.NORTH);
+        morphFrame.setSize(400, 400);
+        morphFrame.setVisible(true);
+        morphFrame.pack();
+    }
     // FUNCTION: resize
     // PURPOSE: given an image it will set it to the given width and height
     public BufferedImage resize(BufferedImage image, int newWidth, int newHeight) {
@@ -268,18 +280,20 @@ public class JMorph extends JFrame {
         return inter;
     }
 
-    private BufferedImage[] morph(BufferedImage image, GriddedImage grid, GriddedImage origGrid){
-        grid.tGrid.setupGrid();
-        origGrid.tGrid.setupGrid();
+    private BufferedImage[] morph(BufferedImage image, GriddedImage leftgrid, GriddedImage rightrid){
+        leftgrid.tGrid.setupGrid();
+        rightrid.tGrid.setupGrid();
         BufferedImage[] morphed = new BufferedImage[frames*seconds];
         BufferedImage source = image;
-        Polygon[] newTriangles = grid.tGrid.getTriangles();
-        Polygon[] oldTriangles = origGrid.tGrid.getTriangles();
+        Polygon[] newTriangles;
+        Polygon[] oldTriangles = leftgrid.tGrid.getTriangles();
         for(int i = 0; i < frames * seconds;i++){
             morphed[i] = image;
+            newTriangles = gridFrames[i].setupGrid();
             for(int j = 0;j < newTriangles.length;j++){
-                warpTriangle(source, morphed[i], oldTriangles[j], newTriangles[j]);
+                warpTriangle(source, morphed[i], oldTriangles[j], newTriangles[j], null, null);
             }
+
         }
 
 
@@ -383,14 +397,15 @@ public class JMorph extends JFrame {
     public class JMorphListener implements ActionListener, ChangeListener, MouseMotionListener, MouseListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == animate) {
-                GriddedImage origleft = new GriddedImage(origLeft, manager);
                 gridFrames = animateGrid();
                 previewGrid = new GriddedImage(leftImage, manager);
                 createPreview();
                 previewGrid.setGrid(gridFrames[0]);
                 frameCounter.start();
-                BufferedImage[] morphFrames = morph(leftImage, leftGrid, origleft);
-                //createMorph(morphFrames);
+                BufferedImage temp = copyImage(leftImage);
+                resize(temp, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+                morphFrames = morph(temp, leftGrid, rightGrid);
+                createMorph(morphFrames);
             } else if (e.getSource() == quit) {
                 System.exit(0);
             }
@@ -949,7 +964,9 @@ public class JMorph extends JFrame {
             BufferedImage src,
             BufferedImage dest,
             Polygon S,
-            Polygon D)
+            Polygon D,
+            Object ALIASING,
+            Object INTERPOLATION)
     {/*
         Object ALIASING,
         Object INTERPOLATION
@@ -965,12 +982,11 @@ public class JMorph extends JFrame {
          Gaussian Elimination with scaled partial pivoting is the method
          used solve the two systems of linear equations.
          ********************************************************/
-        /*
+
         if (ALIASING == null)
             ALIASING = RenderingHints.VALUE_ANTIALIAS_ON;
         if (INTERPOLATION == null)
             INTERPOLATION = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-            */
         double[][] a = new double[3][3];
         for (int i = 0; i < 3; ++i) {
             a[i][0] = S.xpoints[i];
@@ -1019,8 +1035,8 @@ public class JMorph extends JFrame {
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.5);
         g2.setComposite(ac);
 
-        //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, ALIASING);
-        //g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, INTERPOLATION);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, ALIASING);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, INTERPOLATION);
         g2.clip(destPath);
         g2.setTransform(af);
         g2.drawImage(src, 0, 0, null);
@@ -1094,5 +1110,14 @@ public class JMorph extends JFrame {
             x[i] = sum / a[l[i]][i];
         }
     }
+
+    public static BufferedImage copyImage(BufferedImage source){
+        BufferedImage b = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
+        Graphics g = b.getGraphics();
+        g.drawImage(source, 0, 0, null);
+        g.dispose();
+        return b;
+    }
+
 }
 
